@@ -164,8 +164,8 @@
     </div>
 
     <script>
-        // URL de tu Worker de Cloudflare configurado con INVOICES
-        const API_URL = "https://elite-api.mariatuacuica.workers.dev"; // (Reemplaza con tu enlace de elite-api si es diferente)
+        // URL de tu Worker de Cloudflare
+        const API_URL = "https://elite-api.mtua3458.workers.dev";
         
         const urlParams = new URLSearchParams(window.location.search);
         const docNum = urlParams.get('doc');
@@ -184,7 +184,6 @@
             if (saved) {
                 docData = JSON.parse(saved);
                 renderDocument();
-                // Respaldar automáticamente en la nube KV de Cloudflare
                 syncToCloud(docData);
                 return;
             }
@@ -303,7 +302,6 @@
         async function openShareModal(type) {
             if (!docData) { alert("No document data loaded."); return; }
             
-            // Asegurar que se guarde en la nube antes de generar el enlace
             await syncToCloud(docData);
 
             currentShareType = type;
@@ -311,8 +309,8 @@
             const docTypeStr = docData.type.toUpperCase();
             const docNumber = docData.number;
             
-            // Enlace corto limpio y profesional
-            const cleanLink = `https://elitepointpropertyservices.com/factura?doc=${docNumber}`;
+            // ENLACE ACTUALIZADO AL SUBDOMINIO CORRECTO DE FACTURAS
+            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNumber}`;
 
             if (type === 'sms') {
                 document.getElementById('modal-title').innerText = "Enviar Mensaje de Texto (SMS)";
@@ -359,7 +357,6 @@
             }
         }
 
-        // Ejecutar carga inicial
         initDocument();
     </script>
 </body>
