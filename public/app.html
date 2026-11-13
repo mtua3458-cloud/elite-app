@@ -375,7 +375,7 @@
             }
         }
 
-        // REDIRIGIR A FACTURA.HTML CON DATOS GUARDADOS EN LA NUBE Y LOCALSTORAGE
+        // REDIRIGIR A FACTURA.HTML CON DATOS GUARDADOS EN LA NUBE Y LOCALSTORAGE (CORREGIDO A RUTA RELATIVA)
         async function goToPrintPage() {
             const docNum = document.getElementById('doc-number').value.trim();
             if (!docNum) { alert("Por favor ingresa el número de documento."); return; }
@@ -387,7 +387,7 @@
             // Guardar en Cloudflare KV para que abra perfecto en otros dispositivos
             await saveToCloudflareKV(docData);
             
-            // Abrir visor
+            // Abrir visor localmente en el mismo dominio
             window.location.href = `factura.html?doc=${docNum}`;
         }
 
@@ -405,7 +405,7 @@
             const clientFirstName = clientName.split(' ')[0];
             const docTypeStr = docType.toUpperCase();
 
-            const cleanLink = `https://elitepointpropertyservices.com/factura?doc=${docNum}`;
+            const cleanLink = `https://app.elitepointpropertyservices.com/factura.html?doc=${docNum}`;
 
             document.getElementById('payment-text-box').value = `Hi ${clientFirstName}, here is your ${docTypeStr} #${docNum}. Thank you for choosing Elite Point Property Services! View invoice here: ${cleanLink}`;
             document.getElementById('payment-modal').classList.remove('hidden');
