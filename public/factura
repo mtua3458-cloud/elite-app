@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Point Property Services • Visualizador de Documentos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Cinzel', 'serif'] },
+                    colors: {
+                        forest: { 800: '#16382b', 900: '#0d231b', 950: '#07140f' },
+                        gold: { 100: '#fbf5e0', 200: '#f5e6b8', 400: '#e2c055', 500: '#d4af37', 600: '#b89225', 700: '#947218' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            @page { margin: 0.4in; size: letter; }
+            body { background-color: white !important; margin: 0 !important; padding: 0 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .no-print { display: none !important; }
+            #print-document-sheet { box-shadow: none !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen py-8 px-4">
+
+    <div class="max-w-3xl mx-auto space-y-4">
+        <!-- BOTÓN DE PAGO DIRECTO PARA EL CLIENTE -->
+        <div id="payment-banner-container" class="no-print hidden bg-emerald-900 border-2 border-emerald-500 rounded-2xl p-4 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+            <div class="text-center sm:text-left">
+                <p class="text-xs font-bold text-gold-400 uppercase tracking-widest"><i class="fa-solid fa-lock"></i> Secure Online Payment</p>
+                <p class="text-sm font-medium text-slate-100 mt-0.5">Click the button to pay securely with your credit card or Apple Pay.</p>
+            </div>
+            <a id="client-pay-btn" href="#" target="_blank" class="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-extrabold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow transition-all">
+                <i class="fa-solid fa-credit-card"></i> Pay Invoice Online
+            </a>
+        </div>
+
+        <!-- HOJA DE PAPEL FORMAL (VISTA CLIENTE) -->
+        <div id="print-document-sheet" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-12 space-y-6">
+            <div class="flex justify-between items-start border-b-2 border-forest-900 pb-6">
+                <div class="flex items-start gap-4">
+                    <div class="shrink-0 pt-1">
+                        <svg class="w-14 h-10" viewBox="0 0 120 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 52 L42 22 L62 40" stroke="#d4af37" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M34 52 L72 14 L112 52" stroke="#d4af37" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="65" y="33" width="6.5" height="6.5" fill="#d4af37"/>
+                            <rect x="73.5" y="33" width="6.5" height="6.5" fill="#d4af37"/>
+                            <rect x="65" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
+                            <rect x="73.5" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-3xl text-forest-900 tracking-wide">ELITE POINT</h2>
+                        <p class="text-xs font-bold text-gold-600 uppercase tracking-widest">Property Services</p>
+                        <p class="text-[11px] text-slate-500 mt-1">Global Trading Solutions LLC<br>Phone: (463) 287-8167</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span id="pdf-doc-badge" class="px-3 py-1 bg-forest-900 text-gold-400 text-xs font-extrabold rounded uppercase tracking-widest">ESTIMATE</span>
+                    <p class="text-sm font-bold text-slate-800 mt-2"># <span id="pdf-doc-number">EST-2026-001</span></p>
+                    <p class="text-xs text-slate-500">Date: <span id="pdf-doc-date"></span></p>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs space-y-1">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Prepared For:</p>
+                <p id="pdf-client-name" class="font-bold text-sm text-forest-900">Client Name</p>
+                <p id="pdf-client-address" class="text-slate-600"></p>
+                <p id="pdf-client-email" class="text-slate-600"></p>
+                <p id="pdf-client-phone" class="text-slate-600"></p>
+            </div>
+
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b-2 border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
+                        <th class="py-2.5">Service & Material Description</th>
+                        <th class="py-2.5 text-center w-16">Qty</th>
+                        <th class="py-2.5 text-right w-20">Rate</th>
+                        <th class="py-2.5 text-right w-24">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-items-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+
+            <div class="flex justify-end pt-4 border-t border-slate-200">
+                <div class="w-72 space-y-1.5 text-sm">
+                    <div class="flex justify-between text-slate-600">
+                        <span>Materials Subtotal:</span>
+                        <span id="pdf-mat-subtotal" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Indiana Sales Tax (7% on Materials):</span>
+                        <span id="pdf-tax" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600">
+                        <span>Labor Subtotal:</span>
+                        <span id="pdf-labor-total" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-forest-900 border-t-2 border-forest-900 pt-2">
+                        <span>Total (USD):</span>
+                        <span id="pdf-total">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOTO Y DESCRIPCIÓN (SOLO PRESUPUESTO) -->
+            <div id="pdf-house-photo-container" class="hidden pt-5 border-t border-slate-200 space-y-2.5">
+                <p class="text-xs font-bold text-forest-900 uppercase tracking-wider">Property Reference & Proposal Notes:</p>
+                <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 text-center space-y-2">
+                    <img id="pdf-house-photo-img" class="max-h-64 mx-auto rounded-lg object-contain shadow-xs" alt="Property Reference">
+                    <p id="pdf-house-photo-caption" class="text-xs text-slate-700 italic whitespace-pre-line text-left bg-white p-3 rounded-lg border border-slate-200"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARRA DE ACCIÓN: TODOS LOS BOTONES OPERATIVOS -->
+        <div id="action-toolbar" class="no-print grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+            <button onclick="downloadPDF()" class="h-12 w-full bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl shadow text-xs flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+            </button>
+            <button onclick="window.print()" class="h-12 w-full bg-slate-700 hover:bg-slate-800 text-white font-extrabold rounded-xl shadow text-xs flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-print"></i> Imprimir
+            </button>
+            <button onclick="openShareModal('sms')" class="h-12 w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl shadow text-xs flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-comment-sms"></i> Mensaje (SMS)
+            </button>
+            <button onclick="openShareModal('email')" class="h-12 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow text-xs flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-envelope"></i> Correo (Gmail)
+            </button>
+        </div>
+    </div>
+
+    <!-- VENTANA MODAL PARA PERSONALIZAR ENVÍO -->
+    <div id="share-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="modal-title" class="font-bold text-base text-forest-900">Personalizar Envío</h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-600">Modifica el texto antes de enviarlo:</label>
+                <textarea id="share-text-box" rows="5" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none focus:border-gold-600"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="copyShareText()" class="py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-copy"></i> Copiar Texto
+                </button>
+                <button id="modal-action-btn" onclick="executeMainAction()" class="py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar / Abrir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL de tu Worker de Cloudflare
+        const API_URL = "https://elite-api.mtua3458.workers.dev";
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const docNum = urlParams.get('doc');
+        
+        let docData = null;
+        let currentShareType = 'sms';
+
+        async function initDocument() {
+            if (!docNum) {
+                showNotFound();
+                return;
+            }
+
+            // 1. Intentar cargar desde el localStorage local primero
+            const saved = localStorage.getItem(`elite_doc_${docNum}`);
+            if (saved) {
+                docData = JSON.parse(saved);
+                renderDocument();
+                syncToCloud(docData);
+                return;
+            }
+
+            // 2. Si se abre desde otro dispositivo, buscarlo directo en la base de datos Cloudflare KV
+            try {
+                const res = await fetch(`${API_URL}?doc=${encodeURIComponent(docNum)}`);
+                if (res.ok) {
+                    docData = await res.json();
+                    renderDocument();
+                } else {
+                    showNotFound();
+                }
+            } catch (err) {
+                console.error("Error conectando con Elite API:", err);
+                showNotFound();
+            }
+        }
+
+        async function syncToCloud(data) {
+            try {
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {
+                console.error("Error respaldando en la nube:", e);
+            }
+        }
+
+        function renderDocument() {
+            document.getElementById('pdf-doc-number').innerText = docData.number;
+            document.getElementById('pdf-doc-date').innerText = docData.date;
+            document.getElementById('pdf-doc-badge').innerText = docData.type.toUpperCase();
+
+            document.getElementById('pdf-client-name').innerText = docData.clientName || 'Valued Client';
+            document.getElementById('pdf-client-address').innerText = docData.clientAddress || '';
+            document.getElementById('pdf-client-email').innerText = docData.clientEmail || '';
+            document.getElementById('pdf-client-phone').innerText = docData.clientPhone ? `+1 ${docData.clientPhone}` : '';
+
+            if (docData.paymentLink) {
+                document.getElementById('payment-banner-container').classList.remove('hidden');
+                document.getElementById('client-pay-btn').href = docData.paymentLink;
+            }
+
+            const pdfPhotoBox = document.getElementById('pdf-house-photo-container');
+            if (docData.type === 'estimate' && docData.housePhoto) {
+                pdfPhotoBox.classList.remove('hidden');
+                document.getElementById('pdf-house-photo-img').src = docData.housePhoto;
+                document.getElementById('pdf-house-photo-caption').innerText = docData.houseCaption || '';
+            }
+
+            const tbody = document.getElementById('pdf-items-body');
+            tbody.innerHTML = '';
+            let matSubtotal = 0;
+            let laborSubtotal = 0;
+
+            docData.items.forEach(item => {
+                let servName = item.serviceIndex === docData.serviceOptions.length - 1 ? (item.customService || 'Custom Service') : docData.serviceOptions[item.serviceIndex];
+                laborSubtotal += item.laborRate;
+
+                item.materials.forEach(mat => {
+                    let matName = mat.materialIndex === docData.materialOptions.length - 1 ? (mat.customMaterial || 'Custom Material') : docData.materialOptions[mat.materialIndex];
+                    let qtyNum = parseFloat(mat.qty);
+                    let matAmount = (!isNaN(qtyNum) && String(mat.qty).trim() !== "") ? qtyNum * mat.rate : mat.rate;
+                    matSubtotal += matAmount;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="py-3 font-medium text-slate-800 whitespace-pre-line">${servName} - [Material: ${matName}]</td>
+                            <td class="py-3 text-center text-slate-600">${mat.qty}</td>
+                            <td class="py-3 text-right text-slate-600">$${mat.rate.toFixed(2)}</td>
+                            <td class="py-3 text-right font-semibold text-slate-900">$${matAmount.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                if (item.laborRate > 0) {
+                    tbody.innerHTML += `
+                        <tr class="bg-slate-50/50">
+                            <td class="py-2.5 pl-4 text-xs italic text-slate-600">↳ Labor & Installation Workmanship (${servName})</td>
+                            <td class="py-2.5 text-center text-xs text-slate-500">1</td>
+                            <td class="py-2.5 text-right text-xs text-slate-500">$${item.laborRate.toFixed(2)}</td>
+                            <td class="py-2.5 text-right text-xs font-semibold text-slate-800">$${item.laborRate.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            const tax = matSubtotal * 0.07;
+            const total = matSubtotal + tax + laborSubtotal;
+
+            document.getElementById('pdf-mat-subtotal').innerText = `$${matSubtotal.toFixed(2)}`;
+            document.getElementById('pdf-tax').innerText = `$${tax.toFixed(2)}`;
+            document.getElementById('pdf-labor-total').innerText = `$${laborSubtotal.toFixed(2)}`;
+            document.getElementById('pdf-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function showNotFound() {
+            document.getElementById('print-document-sheet').innerHTML = `<div class="text-center py-12"><h2 class="text-lg font-bold text-red-600">Document not found or expired.</h2><p class="text-xs text-slate-500 mt-2">Please ensure you are opening a valid document generated from Elite Point.</p></div>`;
+            document.getElementById('action-toolbar').classList.add('hidden');
+        }
+
+        function downloadPDF() {
+            const sheetElement = document.getElementById('print-document-sheet');
+            html2pdf().set({
+                margin: 0.4,
+                filename: `ElitePoint_${docData ? docData.type.toUpperCase() : 'Document'}_${docNum || 'ID'}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).from(sheetElement).save();
+        }
+
+        async function openShareModal(type) {
+            if (!docData) { alert("No document data loaded."); return; }
+            
+            await syncToCloud(docData);
+
+            currentShareType = type;
+            const clientName = docData.clientName || 'Valued Client';
+            const docTypeStr = docData.type.toUpperCase();
+            const docNumber = docData.number;
+            
+            // Enlace que recibirá el cliente
+            const cleanLink = `https://app.elitepointpropertyservices.com/factura.html?doc=${docNumber}`;
+
+            if (type === 'sms') {
+                document.getElementById('modal-title').innerText = "Enviar Mensaje de Texto (SMS)";
+                document.getElementById('share-text-box').value = `Hi ${clientName}, here is your ${docTypeStr} #${docNumber}. Thank you for choosing Elite Point Property Services! View invoice here: ${cleanLink}`;
+                document.getElementById('modal-action-btn').innerHTML = `<i class="fa-solid fa-comment-sms"></i> Abrir Mensajes`;
+            } else {
+                document.getElementById('modal-title').innerText = "Enviar Correo Electrónico (Gmail)";
+                document.getElementById('share-text-box').value = `Hello ${clientName},\n\nAttached is your ${docTypeStr} #${docNumber} in PDF format. Thank you for choosing Elite Point Property Services!\n\nBest regards,\nElite Point Property Services`;
+                document.getElementById('modal-action-btn').innerHTML = `<i class="fa-solid fa-envelope"></i> Descargar PDF & Abrir Gmail`;
+            }
+
+            document.getElementById('share-modal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('share-modal').classList.add('hidden');
+        }
+
+        function copyShareText() {
+            const textBox = document.getElementById('share-text-box');
+            textBox.select();
+            textBox.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(textBox.value);
+            alert("¡Texto copiado al portapapeles con éxito!");
+        }
+
+        function executeMainAction() {
+            if (!docData) return;
+            const customText = document.getElementById('share-text-box').value;
+
+            if (currentShareType === 'sms') {
+                if (!docData.clientPhone) { alert("Falta el teléfono del cliente."); return; }
+                const phone = `+1${docData.clientPhone.replace(/\D/g,'')}`;
+                const msg = encodeURIComponent(customText);
+                window.location.href = `sms:${phone}?body=${msg}`;
+            } else {
+                if (!docData.clientEmail) { alert("Falta el correo del cliente."); return; }
+                downloadPDF();
+                navigator.clipboard.writeText(customText);
+                const subject = encodeURIComponent(`Elite Point ${docData.type.toUpperCase()} - #${docData.number}`);
+                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(docData.clientEmail)}&subject=${subject}`;
+                alert("✅ ¡PDF descargado y texto copiado!\n\nAbriendo Gmail. Adjunta el archivo PDF descargado y presiona Ctrl+V en el mensaje.");
+                window.open(gmailUrl, '_blank');
+            }
+        }
+
+        initDocument();
+    </script>
+</body>
+</html>
