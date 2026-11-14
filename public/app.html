@@ -139,12 +139,12 @@
     <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-base text-forest-900">Share Document Link</h3>
+                <h3 class="font-bold text-base text-forest-900">Share Payment Link</h3>
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-600">Editable Message (Subdomain Link):</label>
+                <label class="block text-xs font-bold text-slate-600">Editable Message (Payment Link):</label>
                 <textarea id="payment-text-box" rows="5" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none"></textarea>
             </div>
 
@@ -529,10 +529,17 @@
             const clientName = document.getElementById('client-name').value.trim() || 'Valued Client';
             const clientFirstName = clientName.split(' ')[0];
             const docTypeStr = docType.toUpperCase();
-            const cleanLink = `https://factura.elitepointpropertyservice.com/?doc=${docNum}`;
+            
+            // Aquí obtenemos el link de pago guardado (Stripe) en lugar del enlace del documento
+            let paymentLink = docData.paymentLink || "";
+            if (!paymentLink) {
+                let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
+                if (links.length > 0) paymentLink = links[0].url;
+            }
+            const cleanLink = paymentLink || `https://buy.stripe.com/default-link`;
 
             const defaults = {
-                template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. View document here: [Link]"
+                template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. You can complete your payment securely here: [Link]"
             };
             const stored = JSON.parse(localStorage.getItem('elite_company_info') || JSON.stringify(defaults));
 
@@ -561,7 +568,7 @@
         function sendPaymentEmail() {
             const clientEmail = document.getElementById('client-email').value.trim();
             const docNum = document.getElementById('doc-number').value.trim();
-            const subject = encodeURIComponent(`Elite Point Property Services - ${docType.toUpperCase()} #${docNum}`);
+            const subject = encodeURIComponent(`Elite Point Property Services - Payment Link for ${docType.toUpperCase()} #${docNum}`);
             const body = encodeURIComponent(document.getElementById('payment-text-box').value);
             window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
         }
