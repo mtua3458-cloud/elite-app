@@ -28,7 +28,6 @@
         <header class="bg-forest-900 text-white border-b-2 border-gold-500 sticky top-0 z-30 shadow-md w-full">
             <div class="w-full px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
-                    <!-- LOGO OFICIAL REAL DE ELITE POINT -->
                     <div class="shrink-0 bg-forest-950/80 border border-gold-500/40 p-1.5 rounded-xl shadow-inner flex items-center justify-center">
                         <img id="app-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('app-logo-fallback').classList.remove('hidden');" alt="Elite Point Property Services" class="h-10 sm:h-12 w-auto object-contain">
                         <span id="app-logo-fallback" class="hidden font-display font-bold text-gold-400 text-sm px-2 tracking-wider">ELITE POINT</span>
@@ -36,20 +35,17 @@
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0">
-                    <!-- BOTÓN DINÁMICO IMPRIMIR / VER -->
                     <button onclick="goToPrintPage()" id="btn-dynamic-action" class="px-3 py-2 text-xs font-extrabold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl transition-all flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-print"></i> <span id="btn-action-text">Imprimir / Ver Presupuesto</span>
+                        <i class="fa-solid fa-print"></i> <span id="btn-action-text">Print / View Estimate</span>
                     </button>
-                    <!-- BOTÓN ENVIAR LINK DE PAGO -->
                     <button onclick="openPaymentLinkModal()" class="px-3 py-2 text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-credit-card"></i> <span>Enviar Link</span>
+                        <i class="fa-solid fa-paper-plane"></i> <span>Send Link</span>
                     </button>
-                    <!-- BOTÓN TORQUITA (PANEL DE CONTROL / AJUSTES) -->
                     <button onclick="openSettingsModal()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow" title="Panel de Control y Ajustes">
                         <i class="fa-solid fa-gear text-sm"></i>
                     </button>
                     <button onclick="createNewDocument()" class="px-2.5 py-2 text-xs font-bold text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all">
-                        <i class="fa-solid fa-plus"></i> <span>Nuevo</span>
+                        <i class="fa-solid fa-plus"></i> <span>New</span>
                     </button>
                     <button onclick="logoutUser()" class="p-2 text-red-300 hover:text-white bg-forest-800 hover:bg-red-900/60 rounded-xl transition-all" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket text-sm"></i>
@@ -71,199 +67,193 @@
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Número (#):</label>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Number (#):</label>
                         <input type="text" id="doc-number" value="EST-2026-001" class="w-full text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Fecha Emisión:</label>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Issue Date:</label>
                         <input type="date" id="doc-date" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2.5">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Válido Hasta:</label>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Valid Until / Due:</label>
                         <input type="date" id="doc-due-date" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2.5">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Términos:</label>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Terms:</label>
                         <select id="doc-terms" class="w-full text-xs font-bold bg-gold-100 border border-gold-400 rounded-xl px-2.5 py-2.5">
-                            <option value="Due on Receipt">Due on Receipt (Al recibir)</option>
-                            <option value="Net 30">Net 30 (30 días)</option>
+                            <option value="Due on Receipt">Due on Receipt</option>
+                            <option value="Net 30">Net 30</option>
                         </select>
                     </div>
                 </div>
             </section>
 
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
-                <h2 class="text-sm font-extrabold text-forest-900">Datos del Cliente y Propiedad</h2>
+                <h2 class="text-sm font-extrabold text-forest-900">Client & Property Information</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="client-name" placeholder="Nombre del Cliente *" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
-                    <input type="email" id="client-email" placeholder="Correo Electrónico" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
+                    <input type="text" id="client-name" placeholder="Client Name *" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
+                    <input type="email" id="client-email" placeholder="Email Address" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
                     
                     <div class="flex items-center bg-slate-50 border border-slate-300 rounded-xl overflow-hidden focus-within:border-gold-500">
                         <span class="bg-slate-200 px-3 py-2.5 text-xs font-bold text-slate-700 border-r border-slate-300">+1</span>
                         <input type="tel" id="client-phone" placeholder="4632878167" class="w-full text-sm bg-transparent px-3 py-2.5 focus:outline-none">
                     </div>
                 </div>
-                <input type="text" id="client-address" placeholder="Dirección de la Propiedad" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
-                
-                <!-- CAMPO PARA EL LINK DE PAGO -->
-                <div class="pt-2 border-t border-slate-100">
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="block text-[11px] font-bold text-emerald-800"><i class="fa-solid fa-credit-card"></i> Link de Pago (Stripe / Square / URL):</label>
-                        <button type="button" onclick="loadDefaultPaymentLink()" class="text-[10px] text-gold-700 hover:underline font-bold"><i class="fa-solid fa-bolt"></i> Usar link guardado</button>
-                    </div>
-                    <input type="url" id="payment-link" placeholder="https://buy.stripe.com/..." class="w-full text-xs bg-emerald-50/50 border border-emerald-300 rounded-xl px-3 py-2.5 text-slate-700 font-medium">
-                </div>
+                <input type="text" id="client-address" placeholder="Property Address" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
             </section>
 
             <!-- SECCIÓN FOTO DE LA CASA Y DESCRIPCIÓN (SOLO PRESUPUESTO) -->
             <section id="house-photo-editor-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-extrabold text-forest-900 flex items-center gap-2">
-                        <i class="fa-solid fa-house-chimney text-gold-600"></i> Foto de la Casa / Propiedad y Descripción (Solo Presupuesto)
+                        <i class="fa-solid fa-house-chimney text-gold-600"></i> Property Photo & Description (Estimate Only)
                     </h2>
                     <button type="button" id="btn-remove-photo" onclick="removeHousePhoto()" class="hidden text-xs font-bold text-red-600 hover:underline">
-                        <i class="fa-solid fa-trash"></i> Quitar foto
+                        <i class="fa-solid fa-trash"></i> Remove photo
                     </button>
                 </div>
                 <input type="file" id="house-photo-input" accept="image/*" onchange="handleHousePhotoUpload(event)" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-forest-900 file:text-gold-400 hover:file:bg-forest-800 cursor-pointer">
                 
                 <div id="house-photo-editor-preview-box" class="hidden space-y-3 pt-2">
-                    <img id="house-photo-editor-img" class="max-h-52 rounded-xl border border-slate-200 object-contain mx-auto bg-slate-50 p-2" alt="Vista previa casa">
+                    <img id="house-photo-editor-img" class="max-h-52 rounded-xl border border-slate-200 object-contain mx-auto bg-slate-50 p-2" alt="Preview">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Descripción detallada del área / propuesta:</label>
-                        <textarea id="house-photo-caption" rows="3" placeholder="Ej: Propuesta de instalación perimetral..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:border-gold-500"></textarea>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">Detailed description / scope notes:</label>
+                        <textarea id="house-photo-caption" rows="3" placeholder="Ej: Perimeter lighting installation setup..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 focus:outline-none focus:border-gold-500"></textarea>
                     </div>
                 </div>
             </section>
 
             <!-- SERVICIOS Y MATERIALES -->
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
-                <h2 class="text-sm font-extrabold text-forest-900">Servicios, Materiales y Mano de Obra</h2>
+                <h2 class="text-sm font-extrabold text-forest-900">Services, Materials & Labor</h2>
                 <div id="items-cards-container" class="space-y-4"></div>
 
                 <button type="button" onclick="addItemCard()" class="w-full py-3 px-4 bg-forest-900/5 hover:bg-forest-900/10 border-2 border-dashed border-forest-900/30 text-forest-900 rounded-xl text-xs sm:text-sm font-bold transition-all">
-                    <i class="fa-solid fa-plus-circle text-gold-600"></i> Agregar otro Tipo de Servicio
+                    <i class="fa-solid fa-plus-circle text-gold-600"></i> Add Another Service Section
                 </button>
             </section>
         </main>
     </div>
 
-    <!-- MODAL RÁPIDO PARA ENVIAR SOLO EL LINK DE PAGO -->
+    <!-- MODAL PARA ENVIAR ENLACE (GMAIL, SMS O COPIAR) -->
     <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-bold text-base text-forest-900">Enviar Enlace del Documento por SMS</h3>
+                <h3 class="font-bold text-base text-forest-900">Share Document Link</h3>
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-600">Mensaje con el enlace limpio:</label>
-                <textarea id="payment-text-box" rows="4" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none"></textarea>
+                <label class="block text-xs font-bold text-slate-600">Editable Message (Subdomain Link):</label>
+                <textarea id="payment-text-box" rows="5" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none"></textarea>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="copyPaymentText()" class="py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
-                    <i class="fa-solid fa-copy"></i> Copiar Texto
+            <div class="grid grid-cols-3 gap-2 pt-2">
+                <button onclick="copyPaymentText()" class="py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-copy"></i> Copy
                 </button>
-                <button onclick="sendPaymentSMS()" class="py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar SMS
+                <button onclick="sendPaymentSMS()" class="py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-comment-sms"></i> SMS
+                </button>
+                <button onclick="sendPaymentEmail()" class="py-2.5 bg-sky-700 hover:bg-sky-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-envelope"></i> Gmail
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PANEL DE CONTROL Y AJUSTES (ACCIONADO POR LA TORQUITA) -->
+    <!-- MODAL PANEL DE CONTROL Y AJUSTES (TORQUITA) -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
                 <h3 class="font-display font-bold text-lg text-forest-900 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-gold-600"></i> Panel de Control y Ajustes
+                    <i class="fa-solid fa-gear text-gold-600"></i> Control Panel & Settings
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- 0. CARGAR LOGOTIPO MANUALMENTE -->
+            <!-- CARGAR LOGOTIPO MANUALMENTE -->
             <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-image text-gold-600"></i> Logotipo Corporativo</h4>
-                <p class="text-[11px] text-slate-500">Carga tu logo manual para que aparezca arriba, en el inicio de sesión y en todas tus facturas y estimados.</p>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-image text-gold-600"></i> Corporate Logo</h4>
+                <p class="text-[11px] text-slate-500">Upload your logo to apply it across the portal and exported invoices/estimates.</p>
                 <div class="flex flex-col sm:flex-row items-center gap-3">
                     <input type="file" id="setting-logo-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-forest-900 file:text-gold-400 hover:file:bg-forest-800 cursor-pointer">
                     <button type="button" onclick="saveCustomLogo()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl text-xs transition-all shadow shrink-0">
-                        <i class="fa-solid fa-upload"></i> Guardar Logo
+                        <i class="fa-solid fa-upload"></i> Save Logo
                     </button>
                 </div>
             </div>
 
-            <!-- 1. RESUMEN FINANCIERO Y FILTROS -->
+            <!-- RESUMEN FINANCIERO Y FILTROS -->
             <div class="space-y-3">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Reportes de Facturación</h4>
+                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports</h4>
                     <select id="dashboard-filter" onchange="filterDashboardData()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
-                        <option value="all">Todos los registros</option>
-                        <option value="day">Hoy</option>
-                        <option value="week">Esta Semana</option>
-                        <option value="month">Este Mes</option>
-                        <option value="year">Este Año</option>
+                        <option value="all">All Records</option>
+                        <option value="day">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Hoy</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Today</p>
                         <h5 id="dash-day" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
                     </div>
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Semana</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Week</p>
                         <h5 id="dash-week" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
                     </div>
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Mes</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Month</p>
                         <h5 id="dash-month" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
                     </div>
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Año</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Year</p>
                         <h5 id="dash-year" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. GESTIÓN DE ENLACES DE PAGO PREDETERMINADOS -->
+            <!-- GESTIÓN DE ENLACES DE PAGO PREDETERMINADOS (STRIPE) -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-link text-gold-600"></i> Enlaces de Pago Guardados</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-link text-gold-600"></i> Saved Payment Links (Stripe)</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="setting-link-name" placeholder="Nombre (Ej: Pago Estándar)" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <input type="text" id="setting-link-name" placeholder="Name (e.g. Standard Stripe Link)" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
                     <input type="url" id="setting-link-url" placeholder="https://buy.stripe.com/..." class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
                     <button onclick="savePaymentLinkSettings()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Link
+                        <i class="fa-solid fa-floppy-disk"></i> Save Link
                     </button>
                 </div>
                 <div id="saved-links-container" class="space-y-1.5 pt-1"></div>
             </div>
 
-            <!-- 3. GESTIÓN DE USUARIOS Y CONTRASEÑAS -->
+            <!-- GESTIÓN DE USUARIOS -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-users-gear text-gold-600"></i> Gestión de Usuarios y Accesos</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-users-gear text-gold-600"></i> Users & Access</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="setting-user-name" placeholder="Usuario / Correo" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
-                    <input type="password" id="setting-user-pass" placeholder="Contraseña" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <input type="text" id="setting-user-name" placeholder="Username / Email" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <input type="password" id="setting-user-pass" placeholder="Password" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
                     <button onclick="addNewUserSetting()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
-                        <i class="fa-solid fa-user-plus"></i> Registrar Usuario
+                        <i class="fa-solid fa-user-plus"></i> Add User
                     </button>
                 </div>
                 <div id="users-setting-list" class="space-y-1 pt-1"></div>
             </div>
 
-            <!-- 4. LISTADO DE DOCUMENTOS HISTÓRICOS CON BOTÓN DE BORRAR -->
+            <!-- HISTORIAL DE DOCUMENTOS CON BOTÓN DE BORRAR -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Historial de Documentos (Presupuestos y Facturas)</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History</h4>
                 <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 sticky top-0">
                             <tr class="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase">
-                                <th class="py-2 px-3">Tipo / N°</th>
-                                <th class="py-2 px-3">Fecha</th>
-                                <th class="py-2 px-3">Cliente</th>
+                                <th class="py-2 px-3">Type / N°</th>
+                                <th class="py-2 px-3">Date</th>
+                                <th class="py-2 px-3">Client</th>
                                 <th class="py-2 px-3 text-right">Total</th>
-                                <th class="py-2 px-3 text-center">Acciones</th>
+                                <th class="py-2 px-3 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
@@ -276,7 +266,6 @@
     <script>
         const API_URL = "https://elite-api.mtua3458.workers.dev";
 
-        // --- APLICAR Y GUARDAR LOGOTIPO MANUAL ---
         function applySavedLogo() {
             const savedLogo = localStorage.getItem('elite_custom_logo');
             if (savedLogo) {
@@ -291,7 +280,7 @@
         function saveCustomLogo() {
             const fileInput = document.getElementById('setting-logo-input');
             if (!fileInput.files || !fileInput.files[0]) {
-                alert("Selecciona una imagen primero.");
+                alert("Please select an image first.");
                 return;
             }
             const reader = new FileReader();
@@ -309,7 +298,7 @@
                     const compressedBase64 = canvas.toDataURL('image/png');
                     localStorage.setItem('elite_custom_logo', compressedBase64);
                     applySavedLogo();
-                    alert("¡Logotipo actualizado en todo el sistema!");
+                    alert("Logo updated successfully across the system!");
                 };
                 img.src = e.target.result;
             };
@@ -323,7 +312,7 @@
             "Wreaths & Holiday Decor",
             "General Landscaping & Maintenance",
             "Home Improvement Services",
-            "✨ Servicio Personalizado (Custom Service)"
+            "✨ Custom Professional Service"
         ];
 
         const materialOptions = [
@@ -334,7 +323,7 @@
             "Digital Programmable Outdoor Timer",
             "Waterproof Connection Box & Safety Enclosures",
             "Holiday Wreaths & Garlands Decor",
-            "✨ Material Personalizado (Custom Material)"
+            "✨ Custom Material"
         ];
 
         let docType = 'estimate';
@@ -356,7 +345,6 @@
         function createNewDocument() {
             items = [{ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }];
             removeHousePhoto();
-            document.getElementById('payment-link').value = '';
             renderItemsEditor();
         }
 
@@ -366,7 +354,7 @@
             document.getElementById('btn-type-invoice').className = type === 'invoice' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('house-photo-editor-section').classList.toggle('hidden', type !== 'estimate');
 
-            const actionText = type === 'estimate' ? "Imprimir / Ver Presupuesto" : "Imprimir / Ver Factura";
+            const actionText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
             document.getElementById('btn-action-text').innerText = actionText;
         }
 
@@ -418,16 +406,16 @@
                                 </select>
                             </div>
                             <div class="${isCustomMat ? 'block' : 'hidden'}">
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Descripción / Material Personalizado:</label>
-                                <textarea rows="3" placeholder="Ej: luces LED..." oninput="updateMatText(${sIndex}, ${mIndex}, 'customMaterial', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5">${mat.customMaterial}</textarea>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Custom Material Description:</label>
+                                <textarea rows="2" placeholder="Material details..." oninput="updateMatText(${sIndex}, ${mIndex}, 'customMaterial', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5">${mat.customMaterial}</textarea>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-1">
                                 <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Cantidad:</label>
-                                    <input type="text" value="${mat.qty}" placeholder="Ej: 5" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Quantity:</label>
+                                    <input type="text" value="${mat.qty}" placeholder="Qty" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Precio Unit. o Total ($):</label>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Unit Price ($):</label>
                                     <input type="number" value="${mat.rate}" min="0" step="0.01" placeholder="0.00" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
                                 </div>
                             </div>
@@ -438,31 +426,31 @@
                 container.innerHTML += `
                     <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl space-y-3.5">
                         <div class="flex justify-between items-center border-b border-slate-200 pb-2.5">
-                            <span class="text-xs font-extrabold text-forest-900 uppercase">Renglón de Servicio #${sIndex + 1}</span>
-                            <button type="button" onclick="removeServiceItem(${sIndex})" class="text-red-500 hover:text-red-700 text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-red-50"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                            <span class="text-xs font-extrabold text-forest-900 uppercase">Service Section #${sIndex + 1}</span>
+                            <button type="button" onclick="removeServiceItem(${sIndex})" class="text-red-500 hover:text-red-700 text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-red-50"><i class="fa-solid fa-trash"></i> Delete</button>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Tipo de Servicio Principal:</label>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Main Service Type:</label>
                             <select onchange="updateServiceSelect(${sIndex}, 'serviceIndex', this.value)" class="w-full text-xs font-semibold bg-white border border-slate-300 rounded-xl p-2.5">
                                 ${servOptions}
                             </select>
                         </div>
                         <div class="${isCustomServ ? 'block' : 'hidden'}">
-                            <input type="text" value="${item.customService}" placeholder="Nombre del servicio..." oninput="updateServiceText(${sIndex}, 'customService', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5">
+                            <input type="text" value="${item.customService}" placeholder="Custom service name..." oninput="updateServiceText(${sIndex}, 'customService', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5">
                         </div>
 
                         <div class="space-y-2.5 pt-1">
-                            <label class="block text-[11px] font-bold text-slate-700">Materiales Asociados:</label>
+                            <label class="block text-[11px] font-bold text-slate-700">Associated Materials:</label>
                             <div class="space-y-2 pl-2 sm:pl-4 border-l-2 border-gold-500/50">
                                 ${materialsHTML}
                             </div>
-                            <button type="button" onclick="addMaterialToService(${sIndex})" class="w-full py-2.5 bg-forest-900/10 hover:bg-forest-900/20 text-forest-900 font-bold text-xs rounded-xl border border-forest-900/20 transition-all">
-                                <i class="fa-solid fa-plus"></i> + Agregar otro material
+                            <button type="button" onclick="addMaterialToService(${sIndex})" class="w-full py-2.5 bg-forest-900/15 hover:bg-forest-900/20 text-forest-900 font-bold text-xs rounded-xl border border-forest-900/20 transition-all">
+                                <i class="fa-solid fa-plus"></i> + Add Material
                             </button>
                         </div>
 
                         <div class="pt-2 border-t border-slate-200">
-                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Mano de Obra (Labor Workmanship) [$]:</label>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Labor Workmanship Fee ($):</label>
                             <input type="number" value="${item.laborRate}" min="0" step="0.01" oninput="updateServiceText(${sIndex}, 'laborRate', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 font-bold">
                         </div>
                     </div>
@@ -481,6 +469,9 @@
 
         function getPayloadData() {
             const docNum = document.getElementById('doc-number').value.trim() || 'EST-2026-001';
+            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
+            let defaultPayLink = links.length > 0 ? links[0].url : '';
+
             return {
                 type: docType,
                 number: docNum,
@@ -491,7 +482,7 @@
                 clientEmail: document.getElementById('client-email').value,
                 clientPhone: document.getElementById('client-phone').value.trim(),
                 clientAddress: document.getElementById('client-address').value,
-                paymentLink: document.getElementById('payment-link').value.trim(),
+                paymentLink: defaultPayLink,
                 customLogo: localStorage.getItem('elite_custom_logo') || null,
                 housePhoto: housePhotoDataUrl,
                 houseCaption: document.getElementById('house-photo-caption').value,
@@ -510,14 +501,14 @@
                 });
                 return await response.json();
             } catch (err) {
-                console.error("Error sincronizando con la nube:", err);
+                console.error("Cloud sync error:", err);
                 return null;
             }
         }
 
         async function goToPrintPage() {
             const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Por favor ingresa el número de documento."); return; }
+            if (!docNum) { alert("Please enter the document number."); return; }
             const docData = getPayloadData();
             
             localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
@@ -528,7 +519,7 @@
 
         async function openPaymentLinkModal() {
             const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Por favor ingresa el número de documento."); return; }
+            if (!docNum) { alert("Please enter the document number."); return; }
             
             const docData = getPayloadData();
             localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
@@ -537,10 +528,21 @@
             const clientName = document.getElementById('client-name').value.trim() || 'Valued Client';
             const clientFirstName = clientName.split(' ')[0];
             const docTypeStr = docType.toUpperCase();
+            const cleanLink = `https://factura.elitepointpropertyservice.com/?doc=${docNum}`;
 
-            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNum}`;
+            const defaults = {
+                template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. View document here: [Link]"
+            };
+            const stored = JSON.parse(localStorage.getItem('elite_company_info') || JSON.stringify(defaults));
 
-            document.getElementById('payment-text-box').value = `Hi ${clientFirstName}, here is your ${docTypeStr} #${docNum}. Thank you for choosing Elite Point Property Services! View invoice here: ${cleanLink}`;
+            let customMsg = stored.template || defaults.template;
+            customMsg = customMsg
+                .replace(/\[Client\]/g, clientFirstName)
+                .replace(/\[Type\]/g, docTypeStr)
+                .replace(/\[Number\]/g, docNum)
+                .replace(/\[Link\]/g, cleanLink);
+
+            document.getElementById('payment-text-box').value = customMsg;
             document.getElementById('payment-modal').classList.remove('hidden');
         }
 
@@ -551,20 +553,27 @@
         function copyPaymentText() {
             const textBox = document.getElementById('payment-text-box');
             textBox.select();
-            textBox.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(textBox.value);
-            alert("¡Texto copiado con éxito!");
+            alert("Link and text copied to clipboard!");
         }
 
         function sendPaymentSMS() {
             const phoneVal = document.getElementById('client-phone').value.trim();
-            if (!phoneVal) { alert("Falta el número de teléfono del cliente."); return; }
+            if (!phoneVal) { alert("Client phone number is missing."); return; }
             const phone = `+1${phoneVal.replace(/\D/g,'')}`;
             const msg = encodeURIComponent(document.getElementById('payment-text-box').value);
             window.location.href = `sms:${phone}?body=${msg}`;
         }
 
-        // --- FUNCIONES DEL PANEL DE CONTROL (TORQUITA) ---
+        function sendPaymentEmail() {
+            const clientEmail = document.getElementById('client-email').value.trim();
+            if (!clientEmail) { alert("Client email address is missing."); return; }
+            const subject = encodeURIComponent(`Elite Point Property Services - Document #${document.getElementById('doc-number').value}`);
+            const body = encodeURIComponent(document.getElementById('payment-text-box').value);
+            window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
+        }
+
+        // PANEL DE AJUSTES (TORQUITA)
         function openSettingsModal() {
             loadDashboardData();
             document.getElementById('settings-modal').classList.remove('hidden');
@@ -612,7 +621,7 @@
             tbody.innerHTML = '';
 
             if (docs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Sin documentos registrados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No documents recorded.</td></tr>`;
             }
 
             docs.forEach(doc => {
@@ -631,8 +640,8 @@
                         <td class="py-2.5 px-3 font-medium text-slate-800">${doc.clientName}</td>
                         <td class="py-2.5 px-3 text-right font-extrabold text-forest-900">$${total.toFixed(2)}</td>
                         <td class="py-2.5 px-3 text-center space-x-1">
-                            <a href="factura.html?doc=${doc.number}" target="_blank" class="px-2 py-1 bg-forest-900 text-gold-400 rounded text-[10px] font-bold">Ver</a>
-                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Borrar Documento"><i class="fa-solid fa-trash"></i></button>
+                            <a href="factura.html?doc=${doc.number}" target="_blank" class="px-2 py-1 bg-forest-900 text-gold-400 rounded text-[10px] font-bold">View</a>
+                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Delete"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -644,12 +653,11 @@
             document.getElementById('dash-year').innerText = `$${totalYear.toFixed(2)}`;
         }
 
-        // FUNCIÓN PARA BORRAR FACTURA O ESTIMADO
         function deleteDocument(docNum) {
-            if (confirm(`¿Estás segura de que deseas eliminar el documento #${docNum}?`)) {
+            if (confirm(`Are you sure you want to delete document #${docNum}?`)) {
                 localStorage.removeItem(`elite_doc_${docNum}`);
                 loadDashboardData();
-                alert(`Documento #${docNum} eliminado con éxito.`);
+                alert(`Document #${docNum} deleted successfully.`);
             }
         }
 
@@ -674,11 +682,10 @@
             renderDashboardStats(filtered);
         }
 
-        // Gestión Links de Pago Guardados
         function savePaymentLinkSettings() {
             const name = document.getElementById('setting-link-name').value.trim();
             const url = document.getElementById('setting-link-url').value.trim();
-            if (!name || !url) { alert("Ingresa nombre y enlace de pago."); return; }
+            if (!name || !url) { alert("Please enter both name and payment link URL."); return; }
 
             let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
             links.push({ name, url });
@@ -687,7 +694,7 @@
             document.getElementById('setting-link-name').value = '';
             document.getElementById('setting-link-url').value = '';
             renderSavedLinksList();
-            alert("¡Enlace de pago guardado!");
+            alert("Payment link saved!");
         }
 
         function renderSavedLinksList() {
@@ -695,7 +702,7 @@
             container.innerHTML = '';
             let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
             if (links.length === 0) {
-                container.innerHTML = `<p class="text-[11px] text-slate-400">No hay enlaces guardados.</p>`;
+                container.innerHTML = `<p class="text-[11px] text-slate-400">No saved links yet. Add your Stripe links here.</p>`;
                 return;
             }
             links.forEach((link, idx) => {
@@ -703,27 +710,11 @@
                     <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
                         <div class="truncate mr-2"><strong class="text-forest-900">${link.name}:</strong> <a href="${link.url}" target="_blank" class="text-blue-600 underline truncate">${link.url}</a></div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <button onclick="useThisLink('${link.url}')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold text-[10px]">Usar</button>
                             <button onclick="deletePaymentLink(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
             });
-        }
-
-        function useThisLink(url) {
-            document.getElementById('payment-link').value = url;
-            closeSettingsModal();
-            alert("¡Enlace asignado al documento actual!");
-        }
-
-        function loadDefaultPaymentLink() {
-            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            if (links.length > 0) {
-                document.getElementById('payment-link').value = links[0].url;
-            } else {
-                alert("No hay enlaces guardados. Abre la torquita ⚙️ para agregar uno.");
-            }
         }
 
         function deletePaymentLink(idx) {
@@ -733,11 +724,10 @@
             renderSavedLinksList();
         }
 
-        // Gestión de Usuarios Adicionales
         function addNewUserSetting() {
             const u = document.getElementById('setting-user-name').value.trim();
             const p = document.getElementById('setting-user-pass').value.trim();
-            if (!u || !p) { alert("Ingresa usuario y contraseña."); return; }
+            if (!u || !p) { alert("Please enter username and password."); return; }
 
             let users = JSON.parse(localStorage.getItem('elite_users') || '[{"user":"javier","pass":"Elite2026"}]');
             users.push({ user: u, pass: p });
@@ -746,7 +736,7 @@
             document.getElementById('setting-user-name').value = '';
             document.getElementById('setting-user-pass').value = '';
             renderUsersSettingList();
-            alert("¡Usuario registrado con éxito!");
+            alert("User registered successfully!");
         }
 
         function renderUsersSettingList() {
@@ -757,7 +747,7 @@
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
                         <span><i class="fa-solid fa-user-shield text-forest-900"></i> <strong>${usr.user}</strong></span>
-                        ${idx > 0 ? `<button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-[10px] text-slate-400">Principal</span>'}
+                        ${idx > 0 ? `<button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-[10px] text-slate-400">Main</span>'}
                     </div>
                 `;
             });
