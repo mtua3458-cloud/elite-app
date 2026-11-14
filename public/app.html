@@ -24,33 +24,56 @@
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen pb-24">
 
     <div id="app-shell">
-        <!-- CABECERA PRINCIPAL -->
+        <!-- CABECERA PRINCIPAL OPTIMIZADA -->
         <header class="bg-forest-900 text-white border-b-2 border-gold-500 sticky top-0 z-30 shadow-md w-full">
-            <div class="w-full px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
+            <div class="w-full px-4 sm:px-8 h-20 flex items-center justify-between gap-2">
+                
+                <!-- Izquierda: Menú Hamburguesa (Móvil) y Logotipo -->
                 <div class="flex items-center gap-3 min-w-0">
+                    <button onclick="toggleMobileMenu()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow sm:hidden shrink-0" title="Menú">
+                        <i class="fa-solid fa-bars text-base"></i>
+                    </button>
                     <div class="shrink-0 bg-forest-950/80 border border-gold-500/40 p-1.5 rounded-xl shadow-inner flex items-center justify-center">
                         <img id="app-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('app-logo-fallback').classList.remove('hidden');" alt="Elite Point Property Services" class="h-10 sm:h-12 w-auto object-contain">
                         <span id="app-logo-fallback" class="hidden font-display font-bold text-gold-400 text-sm px-2 tracking-wider">ELITE POINT</span>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 shrink-0">
+                <!-- Escritorio: Botones principales completos -->
+                <div class="hidden sm:flex items-center gap-2">
                     <button onclick="goToPrintPage()" id="btn-dynamic-action" class="px-3 py-2 text-xs font-extrabold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl transition-all flex items-center gap-1.5 shadow">
                         <i class="fa-solid fa-print"></i> <span id="btn-action-text">Print / View Estimate</span>
                     </button>
                     <button onclick="openPaymentLinkModal()" class="px-3 py-2 text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all flex items-center gap-1.5 shadow">
                         <i class="fa-solid fa-paper-plane"></i> <span>Send Link</span>
                     </button>
-                    <button onclick="openSettingsModal()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow" title="Panel de Control y Ajustes">
-                        <i class="fa-solid fa-gear text-sm"></i>
-                    </button>
                     <button onclick="createNewDocument()" class="px-2.5 py-2 text-xs font-bold text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all">
                         <i class="fa-solid fa-plus"></i> <span>New</span>
                     </button>
-                    <button onclick="logoutUser()" class="p-2 text-red-300 hover:text-white bg-forest-800 hover:bg-red-900/60 rounded-xl transition-all" title="Cerrar Sesión">
+                </div>
+
+                <!-- Derecha: Tuerquita de ajustes y Salir -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="openSettingsModal()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow" title="Panel de Control y Ajustes">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                    </button>
+                    <button onclick="logoutUser()" class="p-2.5 text-red-300 hover:text-white bg-forest-800 hover:bg-red-900/60 rounded-xl transition-all shadow" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket text-sm"></i>
                     </button>
                 </div>
+            </div>
+
+            <!-- MENÚ DESPLEGABLE MÓVIL (TRES RAYITAS) -->
+            <div id="mobile-dropdown-menu" class="hidden sm:hidden bg-forest-950 border-t border-forest-800 px-4 py-3 space-y-2 shadow-xl">
+                <button onclick="goToPrintPage(); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 text-xs font-extrabold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-print text-sm"></i> <span id="mobile-btn-action-text">Print / View Estimate</span>
+                </button>
+                <button onclick="openPaymentLinkModal(); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-sm"></i> Send Link
+                </button>
+                <button onclick="createNewDocument(); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 text-xs font-extrabold text-white bg-forest-800 hover:bg-forest-700 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-sm"></i> New Document
+                </button>
             </div>
         </header>
 
@@ -143,7 +166,6 @@
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <!-- SELECTOR DE ENLACES DE STRIPE GUARDADOS -->
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold text-slate-600">Select Stripe Link:</label>
                 <select id="modal-stripe-select" onchange="updatePaymentLinkText()" class="w-full text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
@@ -270,11 +292,9 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'https://seaqcflsurcpqiqyakcb.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_GJUTp6ntIw2xZLg-4uaBcA_ygxu8yi7';
 
-        // INICIALIZAR FECHAS AUTOMÁTICAS (PERO EDITABLES)
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('doc-date').value = todayStr;
         
@@ -282,7 +302,11 @@
         dueDateObj.setDate(dueDateObj.getDate() + 3);
         document.getElementById('doc-due-date').value = dueDateObj.toISOString().split('T')[0];
 
-        // ACTUALIZAR VIGENCIA AL CAMBIAR FECHA MANUALMENTE
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-dropdown-menu');
+            menu.classList.toggle('hidden');
+        }
+
         function handleManualDateChange() {
             const issueDateVal = document.getElementById('doc-date').value;
             if (issueDateVal) {
@@ -292,20 +316,17 @@
             }
         }
 
-        // NUMERACIÓN AUTOMÁTICA SECUENCIAL
         function generarSiguienteNumero(tipo) {
             const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
             const prefix = tipo === 'estimate' ? 'EST' : 'INV';
             const year = new Date().getFullYear();
             
-            // Filtra los documentos del año actual y tipo correspondiente
             const docsDelTipo = history.filter(d => d.number && d.number.startsWith(`${prefix}-${year}-`));
             
             if (docsDelTipo.length === 0) {
                 return `${prefix}-${year}-001`;
             }
 
-            // Extrae el número consecutivo más alto
             let maxNum = 0;
             docsDelTipo.forEach(d => {
                 const parts = d.number.split('-');
@@ -424,10 +445,8 @@
             document.getElementById('client-phone').value = '';
             document.getElementById('client-address').value = '';
             
-            // Asigna el siguiente número automático según el tipo de documento
             document.getElementById('doc-number').value = generarSiguienteNumero(docType);
             
-            // Restablece las fechas a hoy y +3 días
             document.getElementById('doc-date').value = todayStr;
             const d = new Date();
             d.setDate(d.getDate() + 3);
@@ -441,13 +460,14 @@
             document.getElementById('btn-type-estimate').className = type === 'estimate' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('btn-type-invoice').className = type === 'invoice' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('house-photo-editor-section').classList.toggle('hidden', type !== 'estimate');
-            document.getElementById('btn-action-text').innerText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
             
-            // Asigna el número automático correspondiente al cambiar entre estimate e invoice
+            const actionText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
+            document.getElementById('btn-action-text').innerText = actionText;
+            document.getElementById('mobile-btn-action-text').innerText = actionText;
+            
             document.getElementById('doc-number').value = generarSiguienteNumero(type);
         }
 
-        // Inicializa el primer número automático al cargar la página
         document.getElementById('doc-number').value = generarSiguienteNumero('estimate');
 
         function handleHousePhotoUpload(event) {
@@ -497,12 +517,12 @@
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-1">
                                 <div>
-                                    <label class="block text-[9px] font-bold text-slate-400">Qty (Número o Texto)</label>
-                                    <input type="text" value="${mat.qty}" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Qty:</label>
+                                    <input type="text" value="${mat.qty}" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2">
                                 </div>
                                 <div>
-                                    <label class="block text-[9px] font-bold text-slate-400">Unit Rate ($)</label>
-                                    <input type="number" value="${mat.rate}" min="0" step="0.01" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Unit Price ($):</label>
+                                    <input type="number" step="0.01" value="${mat.rate}" oninput="updateMatNumber(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2">
                                 </div>
                             </div>
                         </div>
@@ -510,83 +530,85 @@
                 });
 
                 container.innerHTML += `
-                    <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl space-y-3.5">
-                        <div class="flex justify-between items-center border-b border-slate-200 pb-2.5">
-                            <span class="text-xs font-extrabold text-forest-900 uppercase">Service Section #${sIndex + 1}</span>
-                            <button type="button" onclick="removeServiceItem(${sIndex})" class="text-red-500 hover:text-red-700 text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-red-50"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 relative">
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                            <span class="text-xs font-extrabold text-forest-900 uppercase">Section #${sIndex + 1}</span>
+                            <button type="button" onclick="removeItemCard(${sIndex})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i> Delete Section</button>
                         </div>
-                        <select onchange="updateServiceSelect(${sIndex}, 'serviceIndex', this.value)" class="w-full text-xs font-semibold bg-white border border-slate-300 rounded-xl p-2.5">${servOptions}</select>
-                        <div class="${isCustomServ ? 'block' : 'hidden'}">
-                            <input type="text" value="${item.customService}" placeholder="Custom service name..." oninput="updateServiceText(${sIndex}, 'customService', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-600">Service Category:</label>
+                            <select onchange="updateItemSelect(${sIndex}, this.value)" class="w-full text-xs font-bold bg-white border border-slate-300 rounded-xl p-2.5">${servOptions}</select>
+                            <div class="${isCustomServ ? 'block' : 'hidden'} pt-1">
+                                <input type="text" value="${item.customService}" placeholder="Custom service name..." oninput="updateItemCustom(${sIndex}, this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5">
+                            </div>
                         </div>
-                        <div class="space-y-2.5 pt-1">
-                            <label class="block text-[11px] font-bold text-slate-700">Associated Materials:</label>
-                            <div class="space-y-2 pl-2 sm:pl-4 border-l-2 border-gold-500/50">${materialsHTML}</div>
-                            <button type="button" onclick="addMaterialToService(${sIndex})" class="w-full py-2.5 bg-forest-900/15 text-forest-900 font-bold text-xs rounded-xl border border-forest-900/20"><i class="fa-solid fa-plus"></i> + Add Material</button>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-600">Labor Workmanship Fee ($):</label>
+                            <input type="number" step="0.01" value="${item.laborRate}" oninput="updateItemLabor(${sIndex}, this.value)" class="w-full text-xs font-bold bg-white border border-slate-300 rounded-xl p-2.5">
                         </div>
-                        <div class="pt-2 border-t border-slate-200">
-                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Labor Workmanship Fee ($):</label>
-                            <input type="number" value="${item.laborRate}" min="0" step="0.01" oninput="updateServiceText(${sIndex}, 'laborRate', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 font-bold">
+                        <div class="space-y-2 pt-2 border-t border-slate-200">
+                            <label class="block text-xs font-extrabold text-forest-900 uppercase">Materials in Section:</label>
+                            <div class="space-y-2">${materialsHTML}</div>
+                            <button type="button" onclick="addMaterial(${sIndex})" class="w-full py-2 bg-white hover:bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-700 transition-all mt-1">
+                                <i class="fa-solid fa-plus text-gold-600"></i> Add Material
+                            </button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function addItemCard() { items.push({ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }); renderItemsEditor(); }
-        function removeServiceItem(index) { items.splice(index, 1); if (items.length === 0) addItemCard(); renderItemsEditor(); }
-        function addMaterialToService(sIndex) { items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }); renderItemsEditor(); }
-        function removeMaterial(sIndex, mIndex) { items[sIndex].materials.splice(mIndex, 1); if (items[sIndex].materials.length === 0) items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }); renderItemsEditor(); }
-
-        function updateServiceSelect(sIndex, field, val) { items[sIndex][field] = parseInt(val); renderItemsEditor(); }
-        function updateServiceText(sIndex, field, val) { items[sIndex][field] = field === 'laborRate' ? parseFloat(val) || 0 : val; }
-        function updateMatSelect(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseInt(val); renderItemsEditor(); }
-        function updateMatText(sIndex, mIndex, field, val) { 
-            items[sIndex].materials[mIndex][field] = val; 
+        function addItemCard() {
+            items.push({ serviceIndex: 0, customService: '', laborRate: 0, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }] });
+            renderItemsEditor();
         }
 
-        function gatherDocumentData() {
+        function removeItemCard(sIndex) {
+            if (items.length === 1) { alert("At least one service section is required."); return; }
+            items.splice(sIndex, 1);
+            renderItemsEditor();
+        }
+
+        function updateItemSelect(sIndex, val) { items[sIndex].serviceIndex = parseInt(val, 10); renderItemsEditor(); }
+        function updateItemCustom(sIndex, val) { items[sIndex].customService = val; }
+        function updateItemLabor(sIndex, val) { items[sIndex].laborRate = parseFloat(val) || 0; }
+
+        function addMaterial(sIndex) {
+            items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 });
+            renderItemsEditor();
+        }
+
+        function removeMaterial(sIndex, mIndex) {
+            if (items[sIndex].materials.length === 1) { alert("At least one material is required per section."); return; }
+            items[sIndex].materials.splice(mIndex, 1);
+            renderItemsEditor();
+        }
+
+        function updateMatSelect(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseInt(val, 10); renderItemsEditor(); }
+        function updateMatText(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = val; }
+        function updateMatNumber(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseFloat(val) || 0; }
+
+        renderItemsEditor();
+
+        function recolectarDatosDocumento() {
             let matSubtotal = 0;
             let laborTotal = 0;
-
-            const processedItems = items.map(item => {
-                const labor = parseFloat(item.laborRate) || 0;
-                laborTotal += labor;
-
-                const processedMaterials = item.materials.map(mat => {
-                    const rateVal = parseFloat(mat.rate) || 0;
-                    let lineTot = 0;
-
-                    // Si es número multiplica, si es texto ("varias") se guarda pero no suma al dinero
-                    const numericQty = parseFloat(mat.qty);
-                    if (!isNaN(numericQty) && String(mat.qty).trim() !== '') {
-                        lineTot = numericQty * rateVal;
-                        matSubtotal += lineTot;
-                    }
-
-                    return {
-                        materialIndex: mat.materialIndex,
-                        customMaterial: mat.customMaterial,
-                        qty: mat.qty,
-                        rate: rateVal
-                    };
-                });
-
-                return {
-                    serviceIndex: item.serviceIndex,
-                    customService: item.customService,
-                    laborRate: labor,
-                    materials: processedMaterials
-                };
+            items.forEach(it => {
+                laborTotal += (it.laborRate || 0);
+                if (it.materials) {
+                    it.materials.forEach(m => {
+                        const q = parseFloat(m.qty);
+                        if (!isNaN(q)) matSubtotal += (q * (m.rate || 0));
+                    });
+                }
             });
-
             const tax = matSubtotal * 0.07;
             const grandTotal = matSubtotal + tax + laborTotal;
 
             return {
                 type: docType,
                 number: document.getElementById('doc-number').value,
-                date: document.getElementById('doc-date').value || todayStr,
+                date: document.getElementById('doc-date').value,
                 dueDate: document.getElementById('doc-due-date').value,
                 terms: document.getElementById('doc-terms').value,
                 clientName: document.getElementById('client-name').value,
@@ -594,198 +616,178 @@
                 clientPhone: document.getElementById('client-phone').value,
                 clientAddress: document.getElementById('client-address').value,
                 housePhoto: housePhotoDataUrl,
-                houseCaption: document.getElementById('house-photo-caption')?.value || '',
-                items: processedItems,
-                grandTotal: grandTotal,
-                serviceOptions: serviceOptions,
-                materialOptions: materialOptions
+                houseCaption: document.getElementById('house-photo-caption') ? document.getElementById('house-photo-caption').value : '',
+                items: items,
+                total: grandTotal
             };
         }
 
         async function goToPrintPage() {
-            const data = gatherDocumentData();
-            if (!data.clientName) { alert("Please enter the client name."); return; }
-            await guardarFacturaEnSupabase(data.number, data);
-            window.location.href = `factura.html?doc=${data.number}`;
+            const docData = recolectarDatosDocumento();
+            if (!docData.clientName) { alert("Please enter the Client Name."); return; }
+            await guardarFacturaEnSupabase(docData.number, docData);
+            window.location.href = `factura.html?doc=${docData.number}`;
         }
 
-        async function openPaymentLinkModal() {
-            const data = gatherDocumentData();
-            if (!data.clientName) { alert("Please enter the client name first."); return; }
-            await guardarFacturaEnSupabase(data.number, data);
-            
-            // Carga los enlaces de Stripe en el selector del modal
+        function openPaymentLinkModal() {
+            const docData = recolectarDatosDocumento();
+            if (!docData.clientName) { alert("Please enter the Client Name."); return; }
+            guardarFacturaEnSupabase(docData.number, docData);
+
             const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
-            const selectEl = document.getElementById('modal-stripe-select');
-            selectEl.innerHTML = '<option value="">-- Sin enlace de Stripe --</option>';
+            const select = document.getElementById('modal-stripe-select');
+            select.innerHTML = '<option value="">-- Sin enlace de Stripe --</option>';
             links.forEach(l => {
-                selectEl.innerHTML += `<option value="${l.url}">${l.name}</option>`;
+                select.innerHTML += `<option value="${l.url}">${l.name} ($${docData.total.toFixed(2)})</option>`;
             });
 
             updatePaymentLinkText();
             document.getElementById('payment-modal').classList.remove('hidden');
         }
 
-        function updatePaymentLinkText() {
-            const data = gatherDocumentData();
-            const selectedStripeUrl = document.getElementById('modal-stripe-select').value;
-            const shortLink = `https://factura.elitepointpropertyservices.com/client.html?doc=${data.number}`;
-            
-            let msg = `Hi ${data.clientName}, here is your Elite Point document (${data.number}):\n${shortLink}\n`;
-            if (selectedStripeUrl) {
-                msg += `You can pay securely via Stripe here:\n${selectedStripeUrl}\n`;
-            }
-            msg += `Thank you for your business!`;
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
 
+        function updatePaymentLinkText() {
+            const docData = recolectarDatosDocumento();
+            const selectUrl = document.getElementById('modal-stripe-select').value;
+            const clientLink = `${window.location.origin}/client.html?doc=${docData.number}`;
+            
+            const msg = `Hi ${docData.clientName}, here is your Elite Point document (${docData.number}): ${clientLink} Total: $${docData.total.toFixed(2)}. ${selectUrl ? 'Pay here: ' + selectUrl : ''} Thank you for your business!`;
             document.getElementById('payment-text-box').value = msg;
         }
 
-        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
-        function openSettingsModal() { 
-            loadDashboardData();
-            loadUsersList();
-            document.getElementById('settings-modal').classList.remove('hidden'); 
+        function copyPaymentText() {
+            const text = document.getElementById('payment-text-box').value;
+            navigator.clipboard.writeText(text);
+            alert("¡Enlace copiado al portapapeles!");
         }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        function sendPaymentSMS() {
+            const docData = recolectarDatosDocumento();
+            if (!docData.clientPhone) { alert("No phone number specified."); return; }
+            const text = document.getElementById('payment-text-box').value;
+            window.open(`sms:+1${docData.clientPhone}?body=${encodeURIComponent(text)}`);
+        }
+
+        function sendPaymentEmail() {
+            const docData = recolectarDatosDocumento();
+            if (!docData.clientEmail) { alert("No email address specified."); return; }
+            const text = document.getElementById('payment-text-box').value;
+            window.open(`mailto:${docData.clientEmail}?subject=Elite%20Point%20Document%20(${docData.number})&body=${encodeURIComponent(text)}`);
+        }
+
+        function openSettingsModal() {
+            loadDashboardData();
+            loadSettingsLists();
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function loadDashboardData() {
+            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+            let dayTotal = 0, weekTotal = 0, monthTotal = 0, yearTotal = 0;
+            const now = new Date();
+
+            const tbody = document.getElementById('dash-docs-tbody');
+            tbody.innerHTML = '';
+
+            history.forEach(d => {
+                const total = d.total || 0;
+                const dDate = new Date(d.date || now);
+                
+                if (d.date === todayStr) dayTotal += total;
+                if (now - dDate <= 7 * 24 * 60 * 60 * 1000) weekTotal += total;
+                if (dDate.getMonth() === now.getMonth() && dDate.getFullYear() === now.getFullYear()) monthTotal += total;
+                if (dDate.getFullYear() === now.getFullYear()) yearTotal += total;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="py-2.5 px-3 font-bold text-forest-900">${d.number}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${d.date}</td>
+                        <td class="py-2.5 px-3 text-slate-700">${d.clientName || 'N/A'}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-gold-700">$${total.toFixed(2)}</td>
+                        <td class="py-2.5 px-3 text-center space-x-2">
+                            <a href="factura.html?doc=${d.number}" class="text-forest-900 hover:text-gold-600"><i class="fa-solid fa-eye"></i></a>
+                            <button onclick="eliminarFacturaSupabase('${d.number}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('dash-day').innerText = `$${dayTotal.toFixed(2)}`;
+            document.getElementById('dash-week').innerText = `$${weekTotal.toFixed(2)}`;
+            document.getElementById('dash-month').innerText = `$${monthTotal.toFixed(2)}`;
+            document.getElementById('dash-year').innerText = `$${yearTotal.toFixed(2)}`;
+        }
+
+        function loadSettingsLists() {
+            const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
+            const linksCont = document.getElementById('saved-links-container');
+            linksCont.innerHTML = '';
+            links.forEach((l, idx) => {
+                linksCont.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+                        <span class="font-bold text-forest-900 truncate max-w-[200px]">${l.name}</span>
+                        <button onclick="deletePaymentLink(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+
+            const users = JSON.parse(localStorage.getItem('elite_users') || '[]');
+            const usersCont = document.getElementById('users-setting-list');
+            usersCont.innerHTML = '';
+            users.forEach((u, idx) => {
+                usersCont.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
+                        <span class="font-bold text-forest-900">${u.user}</span>
+                        <button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
 
         function savePaymentLinkSettings() {
-            const name = document.getElementById('setting-link-name').value.trim();
-            const url = document.getElementById('setting-link-url').value.trim();
-            if (!name || !url) { alert("Complete los campos del enlace de Stripe."); return; }
+            const name = document.getElementById('setting-link-name').value;
+            const url = document.getElementById('setting-link-url').value;
+            if (!name || !url) { alert("Please fill both fields."); return; }
             let links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
             links.push({ name, url });
             localStorage.setItem('elite_payment_links', JSON.stringify(links));
             document.getElementById('setting-link-name').value = '';
             document.getElementById('setting-link-url').value = '';
-            loadSavedLinks();
-            alert("Enlace de Stripe guardado.");
+            loadSettingsLists();
         }
 
-        function loadSavedLinks() {
-            const container = document.getElementById('saved-links-container');
-            const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
-            container.innerHTML = links.map((l, idx) => `
-                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
-                    <span class="truncate"><strong>${l.name}:</strong> ${l.url}</span>
-                    <button onclick="deleteLink(${idx})" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-        function deleteLink(idx) {
+        function deletePaymentLink(idx) {
             let links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
             links.splice(idx, 1);
             localStorage.setItem('elite_payment_links', JSON.stringify(links));
-            loadSavedLinks();
+            loadSettingsLists();
         }
 
         function addNewUserSetting() {
-            const username = document.getElementById('setting-user-name').value.trim();
-            const password = document.getElementById('setting-user-pass').value.trim();
-
-            if (!username || !password) {
-                alert("Por favor ingrese el usuario y la contraseña.");
-                return;
-            }
-
-            let users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
-            if (users.some(u => u.username === username)) {
-                alert("Este usuario ya existe.");
-                return;
-            }
-
-            users.push({ username, password });
-            localStorage.setItem('elite_system_users', JSON.stringify(users));
-
+            const user = document.getElementById('setting-user-name').value;
+            const pass = document.getElementById('setting-user-pass').value;
+            if (!user || !pass) { alert("Please fill username and password."); return; }
+            let users = JSON.parse(localStorage.getItem('elite_users') || '[]');
+            users.push({ user, pass });
+            localStorage.setItem('elite_users', JSON.stringify(users));
             document.getElementById('setting-user-name').value = '';
             document.getElementById('setting-user-pass').value = '';
-            loadUsersList();
-            alert("¡Usuario creado con éxito!");
-        }
-
-        function loadUsersList() {
-            const container = document.getElementById('users-setting-list');
-            const users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
-            
-            if (users.length === 0) {
-                container.innerHTML = `<p class="text-[11px] text-slate-400 italic">No hay usuarios adicionales registrados.</p>`;
-                return;
-            }
-
-            container.innerHTML = users.map((u, idx) => `
-                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
-                    <span><strong>User:</strong> ${u.username}</span>
-                    <button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
+            loadSettingsLists();
         }
 
         function deleteUserSetting(idx) {
-            let users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
+            let users = JSON.parse(localStorage.getItem('elite_users') || '[]');
             users.splice(idx, 1);
-            localStorage.setItem('elite_system_users', JSON.stringify(users));
-            loadUsersList();
+            localStorage.setItem('elite_users', JSON.stringify(users));
+            loadSettingsLists();
         }
-
-        function loadDashboardData() {
-            loadSavedLinks();
-            loadUsersList();
-            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-            const tbody = document.getElementById('dash-docs-tbody');
-            tbody.innerHTML = history.map(doc => `
-                <tr class="border-b border-slate-100 hover:bg-slate-50">
-                    <td class="py-2.5 px-3 font-bold uppercase">${doc.type} <br><span class="text-slate-400 font-normal">${doc.number}</span></td>
-                    <td class="py-2.5 px-3">${doc.date || 'N/A'}</td>
-                    <td class="py-2.5 px-3">${doc.clientName || 'N/A'}</td>
-                    <td class="py-2.5 px-3 text-right font-extrabold text-gold-700">$${(doc.grandTotal || 0).toFixed(2)}</td>
-                    <td class="py-2.5 px-3 text-center space-x-1">
-                        <a href="factura.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1" title="Ver Vista Gestión"><i class="fa-solid fa-eye"></i></a>
-                        <button onclick="eliminarFacturaSupabase('${doc.number}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-
-            filterDashboardData();
-        }
-
-        function filterDashboardData() {
-            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-            const now = new Date();
-
-            let sumDay = 0, sumWeek = 0, sumMonth = 0, sumYear = 0;
-
-            history.forEach(doc => {
-                if (!doc.date) return;
-                const docDate = new Date(doc.date + 'T00:00:00');
-                const amount = doc.grandTotal || 0;
-
-                if (docDate.toDateString() === now.toDateString()) sumDay += amount;
-                if (docDate.getFullYear() === now.getFullYear()) {
-                    sumYear += amount;
-                    if (docDate.getMonth() === now.getMonth()) sumMonth += amount;
-                }
-                const diffTime = Math.abs(now - docDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays <= 7) sumWeek += amount;
-            });
-
-            document.getElementById('dash-day').innerText = `$${sumDay.toFixed(2)}`;
-            document.getElementById('dash-week').innerText = `$${sumWeek.toFixed(2)}`;
-            document.getElementById('dash-month').innerText = `$${sumMonth.toFixed(2)}`;
-            document.getElementById('dash-year').innerText = `$${sumYear.toFixed(2)}`;
-        }
-
-        function copyPaymentText() {
-            navigator.clipboard.writeText(document.getElementById('payment-text-box').value);
-            alert("Link copied to clipboard!");
-        }
-        function sendPaymentSMS() {
-            window.open(`sms:+1${document.getElementById('client-phone').value}?body=${encodeURIComponent(document.getElementById('payment-text-box').value)}`);
-        }
-        function sendPaymentEmail() {
-            window.open(`mailto:${document.getElementById('client-email').value}?subject=Elite%20Point%20Document&body=${encodeURIComponent(document.getElementById('payment-text-box').value)}`);
-        }
-
-        renderItemsEditor();
     </script>
 </body>
 </html>
