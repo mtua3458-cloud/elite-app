@@ -193,7 +193,7 @@
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
                 <h3 class="font-display font-bold text-lg text-forest-900 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-gold-600"></i> Control Panel & Settings (Cloud Synced)
+                    <i class="fa-solid fa-gear text-gold-600"></i> Control Panel & Settings
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -212,7 +212,7 @@
             <!-- REPORTES FINANCIEROS -->
             <div class="space-y-3">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports (Cloud)</h4>
+                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports</h4>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -260,9 +260,9 @@
                 <div id="users-setting-list" class="space-y-1.5 pt-1"></div>
             </div>
 
-            <!-- HISTORIAL GLOBAL DE DOCUMENTOS DESDE SUPABASE -->
+            <!-- HISTORIAL DE DOCUMENTOS -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates (Sincronizado en la Nube)</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates (Cloud)</h4>
                 <div class="overflow-x-auto max-h-56 border border-slate-200 rounded-xl">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 sticky top-0">
@@ -349,7 +349,6 @@
             }
         }
 
-        // VARIABLE GLOBAL PARA GUARDAR EL HISTORIAL CARGADO DESDE LA NUBE
         let cloudDocumentsHistory = [];
 
         async function cargarDocumentoParaEditar(numeroDoc) {
@@ -706,7 +705,6 @@
             document.getElementById('settings-modal').classList.add('hidden');
         }
 
-        // CARGAR HISTORIAL DIRECTAMENTE DESDE SUPABASE (NUBE COMPARTIDA)
         async function loadDashboardData() {
             const tbody = document.getElementById('dash-docs-tbody');
             tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Sincronizando con la nube...</td></tr>`;
