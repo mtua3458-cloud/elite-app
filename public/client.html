@@ -30,7 +30,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen py-8">
 
-    <!-- BOTÓN DISCRETO PARA QUE EL CLIENTE PUEDA IMPRIMIR O GUARDAR PDF -->
+    <!-- BOTÓN DISCRETO PARA IMPRIMIR O GUARDAR PDF -->
     <div class="no-print max-w-3xl mx-auto px-4 mb-4 flex justify-end">
         <button onclick="window.print()" class="px-4 py-2 text-xs font-bold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl shadow transition-all flex items-center gap-1.5">
             <i class="fa-solid fa-print"></i> Print / Save PDF
@@ -56,6 +56,7 @@
                         <p><i class="fa-solid fa-phone text-gold-600 mr-1.5 w-3"></i> (463) 287-8167</p>
                         <p><i class="fa-solid fa-envelope text-gold-600 mr-1.5 w-3"></i> info@elitepointpropertyservices.com</p>
                         <p><i class="fa-solid fa-globe text-gold-600 mr-1.5 w-3"></i> elitepointpropertyservices.com</p>
+                        <p class="pt-1 font-bold text-forest-900"><i class="fa-solid fa-file-invoice-dollar text-gold-600 mr-1.5 w-3"></i> IN Taxpayer ID (TID): 8001534792</p>
                     </div>
                 </div>
 
@@ -133,7 +134,7 @@
 
             <div class="pt-6 border-t border-slate-100 text-center text-[10px] text-slate-400 space-y-0.5">
                 <p class="font-bold text-forest-900">Elite Point Property Services</p>
-                <p>A DBA of Global Trading Solutions LLC • Professional Property Maintenance & Installation</p>
+                <p>A DBA of Global Trading Solutions LLC • IN Taxpayer ID: 8001534792 • Professional Property Maintenance & Installation</p>
             </div>
 
         </div>
@@ -197,92 +198,4 @@
         function renderizarDocumentoCliente(d) {
             const isEstimate = d.type === 'estimate';
             document.getElementById('doc-title-header').innerText = isEstimate ? 'ESTIMATE' : 'INVOICE';
-            document.getElementById('pdf-doc-number').innerText = d.number;
-
-            const issueDate = d.date || new Date().toISOString().split('T')[0];
-            document.getElementById('pdf-doc-date').innerText = `Date: ${issueDate}`;
-
-            let dueDate = d.dueDate;
-            if (issueDate) {
-                const dt = new Date(issueDate + 'T00:00:00');
-                dt.setDate(dt.getDate() + 3);
-                dueDate = dt.toISOString().split('T')[0];
-            }
-            document.getElementById('pdf-doc-due').innerText = `${isEstimate ? 'Valid Until' : 'Due Date'}: ${dueDate || 'N/A'}`;
-            
-            document.getElementById('pdf-client-name').innerText = d.clientName || 'Valued Client';
-            document.getElementById('pdf-client-address').innerText = d.clientAddress || 'No address specified';
-            document.getElementById('pdf-client-email').innerText = d.clientEmail ? `Email: ${d.clientEmail}` : '';
-            document.getElementById('pdf-client-phone').innerText = d.clientPhone ? `Phone: +1 ${d.clientPhone}` : '';
-            document.getElementById('pdf-terms').innerText = d.terms || 'Due on Receipt';
-
-            if (isEstimate && d.housePhoto) {
-                document.getElementById('pdf-house-section').classList.remove('hidden');
-                document.getElementById('pdf-house-img').src = d.housePhoto;
-                document.getElementById('pdf-house-caption').innerText = d.houseCaption || '';
-            }
-
-            const tbody = document.getElementById('pdf-items-tbody');
-            tbody.innerHTML = '';
-
-            let matSubtotal = 0;
-            let laborTotal = 0;
-
-            if (d.items) {
-                d.items.forEach((item, sIndex) => {
-                    const originalServName = item.serviceIndex === serviceOptions.length - 1 
-                        ? (item.customService || 'Custom Service') 
-                        : serviceOptions[item.serviceIndex];
-                
-                    const labor = parseFloat(item.laborRate) || 0;
-                    laborTotal += labor;
-
-                    tbody.innerHTML += `
-                        <tr class="bg-slate-50/80 font-bold text-forest-900 border-t border-slate-200">
-                            <td colspan="3" class="py-2.5 px-3">Section #${sIndex + 1}: ${originalServName}</td>
-                            <td class="py-2.5 px-3 text-right">$${labor.toFixed(2)} <span class="text-[10px] text-slate-400 font-normal">(Labor)</span></td>
-                        </tr>
-                    `;
-
-                    if (item.materials) {
-                        item.materials.forEach(mat => {
-                            const originalMatName = mat.materialIndex === materialOptions.length - 1 
-                                ? (mat.customMaterial || 'Custom Material') 
-                                : materialOptions[mat.materialIndex];
-
-                            const qty = mat.qty;
-                            const rate = parseFloat(mat.rate) || 0;
-                            
-                            const numericQty = parseFloat(qty);
-                            let lineTotal = 0;
-                            if (!isNaN(numericQty) && String(qty).trim() !== '') {
-                                lineTotal = numericQty * rate;
-                                matSubtotal += lineTotal;
-                            }
-
-                            tbody.innerHTML += `
-                                <tr class="hover:bg-slate-50">
-                                    <td class="py-2 px-3 pl-6 text-slate-700">• ${originalMatName}</td>
-                                    <td class="py-2 px-3 text-center text-slate-600">${qty}</td>
-                                    <td class="py-2 px-3 text-right text-slate-600">$${rate.toFixed(2)}</td>
-                                    <td class="py-2 px-3 text-right font-medium text-slate-800">${!isNaN(numericQty) && String(qty).trim() !== '' ? '$' + lineTotal.toFixed(2) : '-'}</td>
-                                </tr>
-                            `;
-                        });
-                    }
-                });
-            }
-
-            const tax = matSubtotal * 0.07;
-            const grandTotal = matSubtotal + tax + laborTotal;
-
-            document.getElementById('pdf-subtotal').innerText = `$${matSubtotal.toFixed(2)}`;
-            document.getElementById('pdf-tax').innerText = `$${tax.toFixed(2)}`;
-            document.getElementById('pdf-labor').innerText = `$${laborTotal.toFixed(2)}`;
-            document.getElementById('pdf-total').innerText = `$${grandTotal.toFixed(2)}`;
-        }
-
-        cargarDocumentoCliente();
-    </script>
-</body>
-</html>
+            document.getElementById('pdf-doc
