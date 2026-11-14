@@ -160,7 +160,7 @@
         </div>
     </div>
 
-    <!-- MODAL PANEL DE CONTROL Y AJUSTES (TUERQUITA) COMPLETO -->
+    <!-- MODAL PANEL DE CONTROL Y AJUSTES (TUERQUITA) -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -226,6 +226,19 @@
                 <div id="saved-links-container" class="space-y-1.5 pt-1"></div>
             </div>
 
+            <!-- GESTIÓN DE USUARIOS -->
+            <div class="space-y-3 pt-3 border-t border-slate-100">
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-users-gear text-gold-600"></i> Users & Access</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input type="text" id="setting-user-name" placeholder="Username / Email" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <input type="password" id="setting-user-pass" placeholder="Password" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <button onclick="addNewUserSetting()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
+                        <i class="fa-solid fa-user-plus"></i> Add User
+                    </button>
+                </div>
+                <div id="users-setting-list" class="space-y-1.5 pt-1"></div>
+            </div>
+
             <!-- HISTORIAL DE DOCUMENTOS CON BOTÓN DE ELIMINAR -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
                 <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates</h4>
@@ -265,7 +278,6 @@
                     body: JSON.stringify({ doc_number: numeroDoc, doc_data: datosFactura })
                 });
                 
-                // Guardar también en localStorage para el historial y reportes locales
                 let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
                 history = history.filter(d => d.number !== numeroDoc);
                 history.unshift(datosFactura);
@@ -286,7 +298,6 @@
                     }
                 });
 
-                // Eliminar del historial local
                 let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
                 history = history.filter(d => d.number !== numeroDoc);
                 localStorage.setItem('elite_docs_history', JSON.stringify(history));
@@ -484,7 +495,7 @@
             const data = gatherDocumentData();
             if (!data.clientName) { alert("Please enter the client name."); return; }
             await guardarFacturaEnSupabase(data.number, data);
-            window.location.href = `print.html?doc=${data.number}`;
+            window.location.href = `factura.html?doc=${data.number}`;
         }
 
         async function openPaymentLinkModal() {
@@ -505,6 +516,7 @@
         function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
         function openSettingsModal() { 
             loadDashboardData();
+            loadUsersList();
             document.getElementById('settings-modal').classList.remove('hidden'); 
         }
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
@@ -539,8 +551,57 @@
             loadSavedLinks();
         }
 
+        function addNewUserSetting() {
+            const username = document.getElementById('setting-user-name').value.trim();
+            const password = document.getElementById('setting-user-pass').value.trim();
+
+            if (!username || !password) {
+                alert("Por favor ingrese el usuario y la contraseña.");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
+            if (users.some(u => u.username === username)) {
+                alert("Este usuario ya existe.");
+                return;
+            }
+
+            users.push({ username, password });
+            localStorage.setItem('elite_system_users', JSON.stringify(users));
+
+            document.getElementById('setting-user-name').value = '';
+            document.getElementById('setting-user-pass').value = '';
+            loadUsersList();
+            alert("¡Usuario creado con éxito!");
+        }
+
+        function loadUsersList() {
+            const container = document.getElementById('users-setting-list');
+            const users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
+            
+            if (users.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-slate-400 italic">No hay usuarios adicionales registrados.</p>`;
+                return;
+            }
+
+            container.innerHTML = users.map((u, idx) => `
+                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
+                    <span><strong>User:</strong> ${u.username}</span>
+                    <button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function deleteUserSetting(idx) {
+            let users = JSON.parse(localStorage.getItem('elite_system_users') || '[]');
+            users.splice(idx, 1);
+            localStorage.setItem('elite_system_users', JSON.stringify(users));
+            loadUsersList();
+        }
+
         function loadDashboardData() {
             loadSavedLinks();
+            loadUsersList();
             const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
             const tbody = document.getElementById('dash-docs-tbody');
             tbody.innerHTML = history.map(doc => `
@@ -550,7 +611,7 @@
                     <td class="py-2.5 px-3">${doc.clientName || 'N/A'}</td>
                     <td class="py-2.5 px-3 text-right font-extrabold text-gold-700">$${(doc.grandTotal || 0).toFixed(2)}</td>
                     <td class="py-2.5 px-3 text-center space-x-1">
-                        <a href="print.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1"><i class="fa-solid fa-eye"></i></a>
+                        <a href="factura.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1"><i class="fa-solid fa-eye"></i></a>
                         <button onclick="eliminarFacturaSupabase('${doc.number}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
@@ -560,7 +621,6 @@
         }
 
         function filterDashboardData() {
-            const filter = document.getElementById('dashboard-filter').value;
             const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
             const now = new Date();
 
@@ -571,17 +631,11 @@
                 const docDate = new Date(doc.date + 'T00:00:00');
                 const amount = doc.grandTotal || 0;
 
-                // Día actual
                 if (docDate.toDateString() === now.toDateString()) sumDay += amount;
-                
-                // Año actual
                 if (docDate.getFullYear() === now.getFullYear()) {
                     sumYear += amount;
-                    // Mes actual
                     if (docDate.getMonth() === now.getMonth()) sumMonth += amount;
                 }
-
-                // Semana actual (aprox 7 días)
                 const diffTime = Math.abs(now - docDate);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 if (diffDays <= 7) sumWeek += amount;
