@@ -44,17 +44,10 @@
     <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-sm pointer-events-none"></div>
 
     <div id="login-screen" class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gold-500/60">
-        <!-- Cabecera de Login -->
+        <!-- Cabecera de Login con el Logo Oficial -->
         <div class="bg-forest-900 px-6 py-7 text-center border-b-2 border-gold-500 relative">
-            <div class="inline-flex items-center justify-center bg-forest-950/80 border border-gold-500/50 p-3 rounded-2xl mb-3 shadow-inner">
-                <svg class="w-16 h-10" viewBox="0 0 120 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 52 L42 20 L63 39" stroke="#d4af37" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M34 52 L72 14 L112 52" stroke="#d4af37" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                    <rect x="65" y="33" width="6.5" height="6.5" fill="#d4af37"/>
-                    <rect x="73.5" y="33" width="6.5" height="6.5" fill="#d4af37"/>
-                    <rect x="65" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
-                    <rect x="73.5" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
-                </svg>
+            <div class="inline-flex items-center justify-center bg-forest-950/80 border border-gold-500/50 p-2.5 rounded-2xl mb-3 shadow-inner">
+                <img src="1000409393.jpg" alt="Elite Point Property Services" class="h-12 w-auto object-contain">
             </div>
             <h1 class="font-display text-xl sm:text-2xl font-bold text-gold-400 tracking-wider">ELITE POINT</h1>
             <p class="text-[11px] font-bold tracking-widest text-slate-200 uppercase">PROPERTY SERVICES</p>
@@ -122,7 +115,12 @@
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
 
-            if ((user === 'javier' || user === 'admin@elitepoint.com') && pass === 'Elite2026') {
+            // Cargar usuarios guardados en localStorage (incluyendo los nuevos que crees desde el panel de la torquita)
+            let registeredUsers = JSON.parse(localStorage.getItem('elite_users') || '[{"user":"javier","pass":"Elite2026"},{"user":"admin@elitepoint.com","pass":"Elite2026"}]');
+            
+            let isValid = registeredUsers.some(u => u.user === user && u.pass === pass);
+
+            if (isValid) {
                 localStorage.setItem('elite_logged', 'true');
                 window.location.href = 'app.html';
             } else {
