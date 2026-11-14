@@ -24,7 +24,7 @@
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen pb-24">
 
     <div id="app-shell">
-        <!-- CABECERA PRINCIPAL CON EL LOGO OFICIAL DINÁMICO -->
+        <!-- CABECERA PRINCIPAL -->
         <header class="bg-forest-900 text-white border-b-2 border-gold-500 sticky top-0 z-30 shadow-md w-full">
             <div class="w-full px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
@@ -54,7 +54,7 @@
             </div>
         </header>
 
-        <!-- VISTA DE EDITOR EN CAMPO -->
+        <!-- VISTA DE EDITOR -->
         <main class="max-w-4xl mx-auto px-4 pt-6 space-y-4">
             <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
                 <div class="grid grid-cols-2 gap-3 mb-4">
@@ -102,7 +102,7 @@
                 <input type="text" id="client-address" placeholder="Property Address" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
             </section>
 
-            <!-- SECCIÓN FOTO DE LA CASA Y DESCRIPCIÓN -->
+            <!-- FOTO DE LA CASA -->
             <section id="house-photo-editor-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-extrabold text-forest-900 flex items-center gap-2">
@@ -135,19 +135,17 @@
         </main>
     </div>
 
-    <!-- MODAL PARA ENVIAR ENLACE -->
+    <!-- MODAL COMPARTIR ENLACE -->
     <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-base text-forest-900">Share Payment Link</h3>
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-600">Editable Message (Payment Link):</label>
                 <textarea id="payment-text-box" rows="5" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none"></textarea>
             </div>
-
             <div class="grid grid-cols-3 gap-2 pt-2">
                 <button onclick="copyPaymentText()" class="py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
                     <i class="fa-solid fa-copy"></i> Copy
@@ -162,7 +160,7 @@
         </div>
     </div>
 
-    <!-- MODAL PANEL DE CONTROL Y AJUSTES -->
+    <!-- MODAL PANEL DE CONTROL Y AJUSTES (TUERQUITA) COMPLETO -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -172,6 +170,7 @@
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
+            <!-- LOGOTIPO -->
             <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-image text-gold-600"></i> Corporate Logo</h4>
                 <div class="flex flex-col sm:flex-row items-center gap-3">
@@ -181,17 +180,81 @@
                     </button>
                 </div>
             </div>
+
+            <!-- REPORTES FINANCIEROS -->
+            <div class="space-y-3">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports</h4>
+                    <select id="dashboard-filter" onchange="filterDashboardData()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
+                        <option value="all">All Records</option>
+                        <option value="day">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Today</p>
+                        <h5 id="dash-day" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Week</p>
+                        <h5 id="dash-week" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Month</p>
+                        <h5 id="dash-month" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Year</p>
+                        <h5 id="dash-year" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ENLACES DE PAGO STRIPE -->
+            <div class="space-y-3 pt-3 border-t border-slate-100">
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-link text-gold-600"></i> Saved Payment Links (Stripe)</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input type="text" id="setting-link-name" placeholder="Name (e.g. Standard Stripe Link)" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <input type="url" id="setting-link-url" placeholder="https://buy.stripe.com/..." class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <button onclick="savePaymentLinkSettings()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Link
+                    </button>
+                </div>
+                <div id="saved-links-container" class="space-y-1.5 pt-1"></div>
+            </div>
+
+            <!-- HISTORIAL DE DOCUMENTOS CON BOTÓN DE ELIMINAR -->
+            <div class="space-y-3 pt-3 border-t border-slate-100">
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates</h4>
+                <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 sticky top-0">
+                            <tr class="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase">
+                                <th class="py-2 px-3">Type / N°</th>
+                                <th class="py-2 px-3">Date</th>
+                                <th class="py-2 px-3">Client</th>
+                                <th class="py-2 px-3 text-right">Total</th>
+                                <th class="py-2 px-3 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE CON TU PUBLISHABLE KEY
+        // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'https://seaqcflsurcpqiqyakcb.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_GJUTp6ntIw2xZLg-4uaBcA_ygxu8yi7';
 
         async function guardarFacturaEnSupabase(numeroDoc, datosFactura) {
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/facturas`, {
+                await fetch(`${SUPABASE_URL}/rest/v1/facturas`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -199,18 +262,39 @@
                         'Authorization': `Bearer ${SUPABASE_KEY}`,
                         'Prefer': 'resolution=merge-duplicates,return=minimal'
                     },
-                    body: JSON.stringify({
-                        doc_number: numeroDoc,
-                        doc_data: datosFactura
-                    })
+                    body: JSON.stringify({ doc_number: numeroDoc, doc_data: datosFactura })
                 });
-                if (response.ok) {
-                    console.log("¡Factura guardada en Supabase con éxito!");
-                } else {
-                    console.error("Error al sincronizar con Supabase");
-                }
+                
+                // Guardar también en localStorage para el historial y reportes locales
+                let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+                history = history.filter(d => d.number !== numeroDoc);
+                history.unshift(datosFactura);
+                localStorage.setItem('elite_docs_history', JSON.stringify(history));
             } catch (err) {
-                console.error("Error de red con Supabase:", err);
+                console.error("Error al sincronizar:", err);
+            }
+        }
+
+        async function eliminarFacturaSupabase(numeroDoc) {
+            if (!confirm(`¿Estás seguro de eliminar el documento ${numeroDoc}?`)) return;
+            try {
+                await fetch(`${SUPABASE_URL}/rest/v1/facturas?doc_number=eq.${numeroDoc}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                // Eliminar del historial local
+                let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+                history = history.filter(d => d.number !== numeroDoc);
+                localStorage.setItem('elite_docs_history', JSON.stringify(history));
+
+                loadDashboardData();
+                alert("Documento eliminado con éxito.");
+            } catch (err) {
+                console.error("Error al eliminar:", err);
             }
         }
 
@@ -227,10 +311,7 @@
 
         function saveCustomLogo() {
             const fileInput = document.getElementById('setting-logo-input');
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert("Please select an image first.");
-                return;
-            }
+            if (!fileInput.files || !fileInput.files[0]) { alert("Please select an image first."); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
                 localStorage.setItem('elite_custom_logo', e.target.result);
@@ -263,16 +344,7 @@
 
         let docType = 'estimate';
         let housePhotoDataUrl = null;
-        let items = [
-            { 
-                serviceIndex: 0, 
-                customService: '', 
-                laborRate: 150,
-                materials: [
-                    { materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }
-                ]
-            }
-        ];
+        let items = [{ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }];
 
         if (localStorage.getItem('elite_logged') !== 'true') { window.location.href = 'index.html'; }
         function logoutUser() { localStorage.removeItem('elite_logged'); window.location.href = 'index.html'; }
@@ -288,9 +360,7 @@
             document.getElementById('btn-type-estimate').className = type === 'estimate' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('btn-type-invoice').className = type === 'invoice' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('house-photo-editor-section').classList.toggle('hidden', type !== 'estimate');
-
-            const actionText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
-            document.getElementById('btn-action-text').innerText = actionText;
+            document.getElementById('btn-action-text').innerText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
         }
 
         function handleHousePhotoUpload(event) {
@@ -317,7 +387,6 @@
         function renderItemsEditor() {
             const container = document.getElementById('items-cards-container');
             container.innerHTML = '';
-            
             items.forEach((item, sIndex) => {
                 let servOptions = '';
                 serviceOptions.forEach((s, idx) => { servOptions += `<option value="${idx}" ${item.serviceIndex === idx ? 'selected' : ''}>${s}</option>`; });
@@ -330,29 +399,18 @@
                     const isCustomMat = mat.materialIndex === materialOptions.length - 1;
 
                     materialsHTML += `
-                        <div class="p-3 bg-white border border-slate-200 rounded-xl space-y-2.5 relative shadow-2xs">
+                        <div class="p-3 bg-white border border-slate-200 rounded-xl space-y-2.5 relative">
                             <div class="flex justify-between items-center">
                                 <span class="text-[10px] font-extrabold text-slate-400 uppercase">Material #${mIndex + 1}</span>
                                 <button type="button" onclick="removeMaterial(${sIndex}, ${mIndex})" class="text-red-400 hover:text-red-600 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                             </div>
-                            <div>
-                                <select onchange="updateMatSelect(${sIndex}, ${mIndex}, 'materialIndex', this.value)" class="w-full text-xs font-semibold bg-slate-50 border border-slate-300 rounded-xl p-2.5">
-                                    ${matOptions}
-                                </select>
-                            </div>
+                            <select onchange="updateMatSelect(${sIndex}, ${mIndex}, 'materialIndex', this.value)" class="w-full text-xs font-semibold bg-slate-50 border border-slate-300 rounded-xl p-2.5">${matOptions}</select>
                             <div class="${isCustomMat ? 'block' : 'hidden'}">
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Custom Material Description:</label>
                                 <textarea rows="2" placeholder="Material details..." oninput="updateMatText(${sIndex}, ${mIndex}, 'customMaterial', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5">${mat.customMaterial}</textarea>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-1">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Quantity:</label>
-                                    <input type="text" value="${mat.qty}" placeholder="Qty" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Unit Price ($):</label>
-                                    <input type="number" value="${mat.rate}" min="0" step="0.01" placeholder="0.00" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
-                                </div>
+                                <input type="text" value="${mat.qty}" placeholder="Qty" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                <input type="number" value="${mat.rate}" min="0" step="0.01" placeholder="0.00" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
                             </div>
                         </div>
                     `;
@@ -364,26 +422,15 @@
                             <span class="text-xs font-extrabold text-forest-900 uppercase">Service Section #${sIndex + 1}</span>
                             <button type="button" onclick="removeServiceItem(${sIndex})" class="text-red-500 hover:text-red-700 text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-red-50"><i class="fa-solid fa-trash"></i> Delete</button>
                         </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Main Service Type:</label>
-                            <select onchange="updateServiceSelect(${sIndex}, 'serviceIndex', this.value)" class="w-full text-xs font-semibold bg-white border border-slate-300 rounded-xl p-2.5">
-                                ${servOptions}
-                            </select>
-                        </div>
+                        <select onchange="updateServiceSelect(${sIndex}, 'serviceIndex', this.value)" class="w-full text-xs font-semibold bg-white border border-slate-300 rounded-xl p-2.5">${servOptions}</select>
                         <div class="${isCustomServ ? 'block' : 'hidden'}">
                             <input type="text" value="${item.customService}" placeholder="Custom service name..." oninput="updateServiceText(${sIndex}, 'customService', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5">
                         </div>
-
                         <div class="space-y-2.5 pt-1">
                             <label class="block text-[11px] font-bold text-slate-700">Associated Materials:</label>
-                            <div class="space-y-2 pl-2 sm:pl-4 border-l-2 border-gold-500/50">
-                                ${materialsHTML}
-                            </div>
-                            <button type="button" onclick="addMaterialToService(${sIndex})" class="w-full py-2.5 bg-forest-900/15 hover:bg-forest-900/20 text-forest-900 font-bold text-xs rounded-xl border border-forest-900/20 transition-all">
-                                <i class="fa-solid fa-plus"></i> + Add Material
-                            </button>
+                            <div class="space-y-2 pl-2 sm:pl-4 border-l-2 border-gold-500/50">${materialsHTML}</div>
+                            <button type="button" onclick="addMaterialToService(${sIndex})" class="w-full py-2.5 bg-forest-900/15 text-forest-900 font-bold text-xs rounded-xl border border-forest-900/20"><i class="fa-solid fa-plus"></i> + Add Material</button>
                         </div>
-
                         <div class="pt-2 border-t border-slate-200">
                             <label class="block text-[11px] font-bold text-slate-600 mb-1">Labor Workmanship Fee ($):</label>
                             <input type="number" value="${item.laborRate}" min="0" step="0.01" oninput="updateServiceText(${sIndex}, 'laborRate', this.value)" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 font-bold">
@@ -404,69 +451,157 @@
         function updateMatText(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = field === 'rate' ? parseFloat(val) || 0 : val; }
 
         function gatherDocumentData() {
+            let matSubtotal = 0, laborTotal = 0;
+            items.forEach(item => {
+                laborTotal += (item.laborRate || 0);
+                item.materials.forEach(mat => {
+                    matSubtotal += (parseFloat(mat.qty) || 1) * (parseFloat(mat.rate) || 0);
+                });
+            });
+            const tax = matSubtotal * 0.07;
+            const grandTotal = matSubtotal + tax + laborTotal;
+
             return {
                 type: docType,
                 number: document.getElementById('doc-number').value,
-                date: document.getElementById('doc-date').value,
+                date: document.getElementById('doc-date').value || new Date().toISOString().split('T')[0],
                 dueDate: document.getElementById('doc-due-date').value,
                 terms: document.getElementById('doc-terms').value,
-                client: {
-                    name: document.getElementById('client-name').value,
-                    email: document.getElementById('client-email').value,
-                    phone: document.getElementById('client-phone').value,
-                    address: document.getElementById('client-address').value
-                },
+                clientName: document.getElementById('client-name').value,
+                clientEmail: document.getElementById('client-email').value,
+                clientPhone: document.getElementById('client-phone').value,
+                clientAddress: document.getElementById('client-address').value,
                 housePhoto: housePhotoDataUrl,
                 houseCaption: document.getElementById('house-photo-caption')?.value || '',
-                items: items
+                items: items,
+                grandTotal: grandTotal,
+                serviceOptions: serviceOptions,
+                materialOptions: materialOptions
             };
         }
 
         async function goToPrintPage() {
             const data = gatherDocumentData();
-            if (!data.client.name) {
-                alert("Please enter the client name.");
-                return;
-            }
-            localStorage.setItem('elite_current_doc', JSON.stringify(data));
+            if (!data.clientName) { alert("Please enter the client name."); return; }
             await guardarFacturaEnSupabase(data.number, data);
             window.location.href = `print.html?doc=${data.number}`;
         }
 
         async function openPaymentLinkModal() {
             const data = gatherDocumentData();
-            if (!data.client.name) {
-                alert("Please enter the client name first.");
-                return;
-            }
+            if (!data.clientName) { alert("Please enter the client name first."); return; }
             await guardarFacturaEnSupabase(data.number, data);
             
-            const shortLink = `https://elite-point.pages.dev/?doc=${data.number}`;
-            const msg = `Hi ${data.client.name}, here is your Elite Point document (${data.number}):\n${shortLink}\nThank you for your business!`;
+            const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
+            const defaultLink = links.length > 0 ? links[0].url : 'https://buy.stripe.com/...';
+            data.paymentLink = defaultLink;
+
+            const shortLink = `https://factura.elitepointpropertyservices.com/?doc=${data.number}`;
+            const msg = `Hi ${data.clientName}, here is your Elite Point document (${data.number}):\n${shortLink}\nThank you for your business!`;
             document.getElementById('payment-text-box').value = msg;
             document.getElementById('payment-modal').classList.remove('hidden');
         }
 
         function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
-        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function openSettingsModal() { 
+            loadDashboardData();
+            document.getElementById('settings-modal').classList.remove('hidden'); 
+        }
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
 
+        function savePaymentLinkSettings() {
+            const name = document.getElementById('setting-link-name').value.trim();
+            const url = document.getElementById('setting-link-url').value.trim();
+            if (!name || !url) { alert("Complete los campos del enlace de Stripe."); return; }
+            let links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
+            links.push({ name, url });
+            localStorage.setItem('elite_payment_links', JSON.stringify(links));
+            document.getElementById('setting-link-name').value = '';
+            document.getElementById('setting-link-url').value = '';
+            loadSavedLinks();
+            alert("Enlace de Stripe guardado.");
+        }
+
+        function loadSavedLinks() {
+            const container = document.getElementById('saved-links-container');
+            const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
+            container.innerHTML = links.map((l, idx) => `
+                <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-xl border border-slate-200">
+                    <span class="truncate"><strong>${l.name}:</strong> ${l.url}</span>
+                    <button onclick="deleteLink(${idx})" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+        function deleteLink(idx) {
+            let links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
+            links.splice(idx, 1);
+            localStorage.setItem('elite_payment_links', JSON.stringify(links));
+            loadSavedLinks();
+        }
+
+        function loadDashboardData() {
+            loadSavedLinks();
+            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+            const tbody = document.getElementById('dash-docs-tbody');
+            tbody.innerHTML = history.map(doc => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="py-2.5 px-3 font-bold uppercase">${doc.type} <br><span class="text-slate-400 font-normal">${doc.number}</span></td>
+                    <td class="py-2.5 px-3">${doc.date || 'N/A'}</td>
+                    <td class="py-2.5 px-3">${doc.clientName || 'N/A'}</td>
+                    <td class="py-2.5 px-3 text-right font-extrabold text-gold-700">$${(doc.grandTotal || 0).toFixed(2)}</td>
+                    <td class="py-2.5 px-3 text-center space-x-1">
+                        <a href="print.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1"><i class="fa-solid fa-eye"></i></a>
+                        <button onclick="eliminarFacturaSupabase('${doc.number}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            filterDashboardData();
+        }
+
+        function filterDashboardData() {
+            const filter = document.getElementById('dashboard-filter').value;
+            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+            const now = new Date();
+
+            let sumDay = 0, sumWeek = 0, sumMonth = 0, sumYear = 0;
+
+            history.forEach(doc => {
+                if (!doc.date) return;
+                const docDate = new Date(doc.date + 'T00:00:00');
+                const amount = doc.grandTotal || 0;
+
+                // Día actual
+                if (docDate.toDateString() === now.toDateString()) sumDay += amount;
+                
+                // Año actual
+                if (docDate.getFullYear() === now.getFullYear()) {
+                    sumYear += amount;
+                    // Mes actual
+                    if (docDate.getMonth() === now.getMonth()) sumMonth += amount;
+                }
+
+                // Semana actual (aprox 7 días)
+                const diffTime = Math.abs(now - docDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays <= 7) sumWeek += amount;
+            });
+
+            document.getElementById('dash-day').innerText = `$${sumDay.toFixed(2)}`;
+            document.getElementById('dash-week').innerText = `$${sumWeek.toFixed(2)}`;
+            document.getElementById('dash-month').innerText = `$${sumMonth.toFixed(2)}`;
+            document.getElementById('dash-year').innerText = `$${sumYear.toFixed(2)}`;
+        }
+
         function copyPaymentText() {
-            const text = document.getElementById('payment-text-box').value;
-            navigator.clipboard.writeText(text);
+            navigator.clipboard.writeText(document.getElementById('payment-text-box').value);
             alert("Link copied to clipboard!");
         }
-
         function sendPaymentSMS() {
-            const phone = document.getElementById('client-phone').value;
-            const text = encodeURIComponent(document.getElementById('payment-text-box').value);
-            window.open(`sms:+1${phone}?body=${text}`);
+            window.open(`sms:+1${document.getElementById('client-phone').value}?body=${encodeURIComponent(document.getElementById('payment-text-box').value)}`);
         }
-
         function sendPaymentEmail() {
-            const email = document.getElementById('client-email').value;
-            const text = encodeURIComponent(document.getElementById('payment-text-box').value);
-            window.open(`mailto:${email}?subject=Elite%20Point%20Document&body=${text}`);
+            window.open(`mailto:${document.getElementById('client-email').value}?subject=Elite%20Point%20Document&body=${encodeURIComponent(document.getElementById('payment-text-box').value)}`);
         }
 
         renderItemsEditor();
