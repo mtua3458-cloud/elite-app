@@ -48,19 +48,13 @@
         <div id="print-document-sheet" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-12 space-y-6">
             <div class="flex justify-between items-start border-b-2 border-forest-900 pb-6">
                 <div class="flex items-start gap-4">
-                    <div class="shrink-0 pt-1">
-                        <svg class="w-14 h-10" viewBox="0 0 120 65" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 52 L42 22 L62 40" stroke="#d4af37" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M34 52 L72 14 L112 52" stroke="#d4af37" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <rect x="65" y="33" width="6.5" height="6.5" fill="#d4af37"/>
-                            <rect x="73.5" y="33" width="6.5" height="6.5" fill="#d4af37"/>
-                            <rect x="65" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
-                            <rect x="73.5" y="41.5" width="6.5" height="6.5" fill="#d4af37"/>
-                        </svg>
+                    <!-- LOGO OFICIAL REAL DE ELITE POINT -->
+                    <div class="shrink-0 bg-forest-950 p-1.5 rounded-xl border border-gold-500/40 shadow-inner">
+                        <img src="1000409393.jpg" alt="Elite Point Property Services" class="h-14 w-auto object-contain">
                     </div>
                     <div>
-                        <h2 class="font-display font-bold text-3xl text-forest-900 tracking-wide">ELITE POINT</h2>
-                        <p class="text-xs font-bold text-gold-600 uppercase tracking-widest">Property Services</p>
+                        <h2 class="font-display font-bold text-2xl text-forest-900 tracking-wide">ELITE POINT</h2>
+                        <p class="text-[10px] font-bold text-gold-600 uppercase tracking-widest">Property Services</p>
                         <p class="text-[11px] text-slate-500 mt-1">Global Trading Solutions LLC<br>Phone: (463) 287-8167</p>
                     </div>
                 </div>
@@ -309,8 +303,8 @@
             const docTypeStr = docData.type.toUpperCase();
             const docNumber = docData.number;
             
-            // Enlace que recibirá el cliente
-            const cleanLink = `https://app.elitepointpropertyservices.com/factura.html?doc=${docNumber}`;
+            // Enlace independiente apuntando al subdominio del visor
+            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNumber}`;
 
             if (type === 'sms') {
                 document.getElementById('modal-title').innerText = "Enviar Mensaje de Texto (SMS)";
