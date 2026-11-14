@@ -44,10 +44,11 @@
     <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-sm pointer-events-none"></div>
 
     <div id="login-screen" class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gold-500/60">
-        <!-- Cabecera de Login con el Logo Oficial -->
+        <!-- Cabecera de Login con el Logo Oficial Dinámico -->
         <div class="bg-forest-900 px-6 py-7 text-center border-b-2 border-gold-500 relative">
             <div class="inline-flex items-center justify-center bg-forest-950/80 border border-gold-500/50 p-2.5 rounded-2xl mb-3 shadow-inner">
-                <img src="1000409393.jpg" alt="Elite Point Property Services" class="h-12 w-auto object-contain">
+                <img id="login-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('login-logo-fallback').classList.remove('hidden');" alt="Elite Point Property Services" class="h-14 w-auto object-contain">
+                <i id="login-logo-fallback" class="hidden fa-solid fa-crown text-gold-400 text-2xl px-3 py-1"></i>
             </div>
             <h1 class="font-display text-xl sm:text-2xl font-bold text-gold-400 tracking-wider">ELITE POINT</h1>
             <p class="text-[11px] font-bold tracking-widest text-slate-200 uppercase">PROPERTY SERVICES</p>
@@ -98,6 +99,18 @@
     <p class="text-[11px] text-slate-400 mt-4 text-center">US Billing & Estimate System • Indiana Sales Tax Ready</p>
 
     <script>
+        // Aplicar logotipo personalizado guardado desde los ajustes
+        function applySavedLoginLogo() {
+            const savedLogo = localStorage.getItem('elite_custom_logo');
+            if (savedLogo) {
+                const loginImg = document.getElementById('login-logo-img');
+                loginImg.src = savedLogo;
+                loginImg.style.display = 'block';
+                document.getElementById('login-logo-fallback').classList.add('hidden');
+            }
+        }
+        applySavedLoginLogo();
+
         function togglePasswordVisibility(passId, iconId) {
             const passInput = document.getElementById(passId);
             const icon = document.getElementById(iconId);
@@ -115,7 +128,7 @@
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
 
-            // Cargar usuarios guardados en localStorage (incluyendo los nuevos que crees desde el panel de la torquita)
+            // Cargar usuarios guardados en localStorage (incluyendo los nuevos creados desde la torquita)
             let registeredUsers = JSON.parse(localStorage.getItem('elite_users') || '[{"user":"javier","pass":"Elite2026"},{"user":"admin@elitepoint.com","pass":"Elite2026"}]');
             
             let isValid = registeredUsers.some(u => u.user === user && u.pass === pass);
