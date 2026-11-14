@@ -71,10 +71,9 @@
     <main class="max-w-3xl mx-auto px-2 sm:px-4 pt-6">
         <div id="print-document-sheet" class="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-10 space-y-6">
             
-            <!-- CABECERA DISTRIBUIDA (IZQUIERDA: EMPRESA Y DATOS / DERECHA: NÚMERO Y FECHAS) -->
+            <!-- CABECERA DISTRIBUIDA -->
             <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-6">
                 
-                <!-- BLOQUE IZQUIERDO: LOGO, NOMBRE EMPRESA, JAVIER MATURANA Y CONTACTO -->
                 <div class="space-y-3">
                     <div class="bg-forest-950 p-2.5 rounded-2xl border border-gold-500/40 shadow-inner inline-block">
                         <img id="pdf-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('pdf-logo-fallback').classList.remove('hidden');" alt="Elite Point" class="h-12 w-auto object-contain">
@@ -94,7 +93,6 @@
                     </div>
                 </div>
 
-                <!-- BLOQUE DERECHO: TIPO DE DOCUMENTO, NÚMERO Y FECHAS -->
                 <div class="text-left sm:text-right space-y-1.5 w-full sm:w-auto">
                     <h1 id="doc-title-header" class="font-display font-bold text-xl sm:text-2xl text-forest-900 uppercase tracking-wider">ESTIMATE</h1>
                     <p class="text-xs font-extrabold text-gold-700"><span id="pdf-doc-number">EST-2026-001</span></p>
@@ -119,7 +117,7 @@
                 </div>
             </div>
 
-            <!-- FOTO DE LA CASA (SI ES ESTIMATE Y TIENE FOTO) -->
+            <!-- FOTO DE LA CASA -->
             <div id="pdf-house-section" class="hidden space-y-2">
                 <h3 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider">Property / Evaluated Area</h3>
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center space-y-2">
@@ -141,9 +139,7 @@
                                 <th class="py-2.5 px-3 text-right">Total</th>
                             </tr>
                         </thead>
-                        <tbody id="pdf-items-tbody" class="divide-y divide-slate-100">
-                            <!-- Inyectado por JS -->
-                        </tbody>
+                        <tbody id="pdf-items-tbody" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -178,7 +174,7 @@
                 </div>
             </div>
 
-            <!-- PIE DE PÁGINA CON DATOS LEGALES DBA -->
+            <!-- PIE DE PÁGINA -->
             <div class="pt-6 border-t border-slate-100 text-center text-[10px] text-slate-400 space-y-0.5">
                 <p class="font-bold text-forest-900">Elite Point Property Services</p>
                 <p>A DBA of Global Trading Solutions LLC • Professional Property Maintenance & Installation</p>
@@ -187,7 +183,7 @@
         </div>
     </main>
 
-    <!-- MODAL PANEL DE AJUSTES DE LA FACTURA (TORQUITA) -->
+    <!-- MODAL AJUSTES -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-3">
@@ -235,7 +231,7 @@
         </div>
     </div>
 
-    <!-- MODAL PARA ENVIAR POR GMAIL O SMS -->
+    <!-- MODAL COMPARTIR -->
     <div id="share-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -406,7 +402,6 @@
                     const servName = translateService(originalServName);
                     laborTotal += (item.laborRate || 0);
 
-                    // SIN SÍMBOLOS EXTRAÑOS EN EL TÍTULO DE LA SECCIÓN
                     tbody.innerHTML += `
                         <tr class="bg-slate-50/80 font-bold text-forest-900 border-t border-slate-200">
                             <td colspan="3" class="py-2.5 px-3">Section #${sIndex + 1}: ${servName}</td>
@@ -456,7 +451,9 @@
             const clientFirstName = clientName.split(' ')[0];
             const docTypeStr = currentDocData.type.toUpperCase();
             const docNum = currentDocData.number;
-            const cleanLink = `https://factura.elitepointpropertyservice.com/?doc=${docNum}`;
+            
+            // Enlace personalizado usando exactamente tu subdominio de factura
+            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNum}`;
 
             const defaults = {
                 template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. View document here: [Link]"
@@ -475,7 +472,7 @@
             const actionBtn = document.getElementById('share-action-btn');
 
             if (mode === 'email') {
-                modalTitle.innerText = "Send via Gmail (Zoho)";
+                modalTitle.innerText = "Send via Gmail";
                 textBox.value = customMsg;
                 actionBtn.innerHTML = `<i class="fa-solid fa-envelope"><span> Send Gmail</span>`;
             } else {
