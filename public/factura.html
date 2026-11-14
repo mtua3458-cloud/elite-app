@@ -73,6 +73,7 @@
                         <p><i class="fa-solid fa-phone text-gold-600 mr-1.5 w-3"></i> <span id="comp-phone">(463) 287-8167</span></p>
                         <p><i class="fa-solid fa-envelope text-gold-600 mr-1.5 w-3"></i> <span id="comp-email">info@elitepointpropertyservices.com</span></p>
                         <p><i class="fa-solid fa-globe text-gold-600 mr-1.5 w-3"></i> <span id="comp-web">elitepointpropertyservices.com</span></p>
+                        <p class="pt-1 font-bold text-forest-900"><i class="fa-solid fa-file-invoice-dollar text-gold-600 mr-1.5 w-3"></i> IN Taxpayer ID (TID): 8001534792</p>
                     </div>
                 </div>
 
@@ -150,7 +151,7 @@
 
             <div class="pt-6 border-t border-slate-100 text-center text-[10px] text-slate-400 space-y-0.5">
                 <p class="font-bold text-forest-900">Elite Point Property Services</p>
-                <p>A DBA of Global Trading Solutions LLC • Professional Property Maintenance & Installation</p>
+                <p>A DBA of Global Trading Solutions LLC • IN Taxpayer ID: 8001534792 • Professional Property Maintenance & Installation</p>
             </div>
 
         </div>
@@ -365,17 +366,22 @@
                                 ? (mat.customMaterial || 'Custom Material') 
                                 : materialOptions[mat.materialIndex];
 
-                            const qty = parseFloat(mat.qty) || 1;
+                            const qty = mat.qty;
                             const rate = parseFloat(mat.rate) || 0;
-                            const lineTotal = qty * rate;
-                            matSubtotal += lineTotal;
+                            
+                            const numericQty = parseFloat(qty);
+                            let lineTotal = 0;
+                            if (!isNaN(numericQty) && String(qty).trim() !== '') {
+                                lineTotal = numericQty * rate;
+                                matSubtotal += lineTotal;
+                            }
 
                             tbody.innerHTML += `
                                 <tr class="hover:bg-slate-50">
                                     <td class="py-2 px-3 pl-6 text-slate-700">• ${originalMatName}</td>
                                     <td class="py-2 px-3 text-center text-slate-600">${qty}</td>
                                     <td class="py-2 px-3 text-right text-slate-600">$${rate.toFixed(2)}</td>
-                                    <td class="py-2 px-3 text-right font-medium text-slate-800">$${lineTotal.toFixed(2)}</td>
+                                    <td class="py-2 px-3 text-right font-medium text-slate-800">${!isNaN(numericQty) && String(qty).trim() !== '' ? '$' + lineTotal.toFixed(2) : '-'}</td>
                                 </tr>
                             `;
                         });
@@ -397,7 +403,6 @@
             const settings = JSON.parse(localStorage.getItem('elite_company_cfg') || '{}');
             const template = settings.msg || "Hi {client}, here is your Elite Point document ({number}): {link} Thank you for your business!";
             
-            // Genera el enlace apuntando explícitamente a client.html para el cliente
             let clientLink = window.location.href.replace('factura.html', 'client.html');
             if (!clientLink.includes('client.html')) {
                 clientLink = window.location.origin + '/client.html' + window.location.search;
