@@ -68,11 +68,11 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
                     <div>
                         <label class="block text-[11px] font-bold text-slate-500 mb-1">Number (#):</label>
-                        <input type="text" id="doc-number" value="EST-2026-001" class="w-full text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                        <input type="text" id="doc-number" class="w-full text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-500 mb-1">Issue Date:</label>
-                        <input type="date" id="doc-date" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2.5">
+                        <input type="date" id="doc-date" onchange="handleManualDateChange()" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2.5">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-500 mb-1">Valid Until / Due:</label>
@@ -142,6 +142,15 @@
                 <h3 class="font-bold text-base text-forest-900">Share Payment Link</h3>
                 <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 text-lg px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
+            
+            <!-- SELECTOR DE ENLACES DE STRIPE GUARDADOS -->
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-slate-600">Select Stripe Link:</label>
+                <select id="modal-stripe-select" onchange="updatePaymentLinkText()" class="w-full text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
+                    <option value="">-- Sin enlace de Stripe --</option>
+                </select>
+            </div>
+
             <div class="space-y-2">
                 <label class="block text-xs font-bold text-slate-600">Editable Message (Payment Link):</label>
                 <textarea id="payment-text-box" rows="5" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700 focus:outline-none"></textarea>
@@ -265,6 +274,53 @@
         const SUPABASE_URL = 'https://seaqcflsurcpqiqyakcb.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_GJUTp6ntIw2xZLg-4uaBcA_ygxu8yi7';
 
+        // INICIALIZAR FECHAS AUTOMÁTICAS (PERO EDITABLES)
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('doc-date').value = todayStr;
+        
+        const dueDateObj = new Date();
+        dueDateObj.setDate(dueDateObj.getDate() + 3);
+        document.getElementById('doc-due-date').value = dueDateObj.toISOString().split('T')[0];
+
+        // ACTUALIZAR VIGENCIA AL CAMBIAR FECHA MANUALMENTE
+        function handleManualDateChange() {
+            const issueDateVal = document.getElementById('doc-date').value;
+            if (issueDateVal) {
+                const dt = new Date(issueDateVal + 'T00:00:00');
+                dt.setDate(dt.getDate() + 3);
+                document.getElementById('doc-due-date').value = dt.toISOString().split('T')[0];
+            }
+        }
+
+        // NUMERACIÓN AUTOMÁTICA SECUENCIAL
+        function generarSiguienteNumero(tipo) {
+            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
+            const prefix = tipo === 'estimate' ? 'EST' : 'INV';
+            const year = new Date().getFullYear();
+            
+            // Filtra los documentos del año actual y tipo correspondiente
+            const docsDelTipo = history.filter(d => d.number && d.number.startsWith(`${prefix}-${year}-`));
+            
+            if (docsDelTipo.length === 0) {
+                return `${prefix}-${year}-001`;
+            }
+
+            // Extrae el número consecutivo más alto
+            let maxNum = 0;
+            docsDelTipo.forEach(d => {
+                const parts = d.number.split('-');
+                if (parts.length === 3) {
+                    const n = parseInt(parts[2], 10);
+                    if (!isNaN(n) && n > maxNum) {
+                        maxNum = n;
+                    }
+                }
+            });
+
+            const nextNumStr = String(maxNum + 1).padStart(3, '0');
+            return `${prefix}-${year}-${nextNumStr}`;
+        }
+
         async function guardarFacturaEnSupabase(numeroDoc, datosFactura) {
             try {
                 await fetch(`${SUPABASE_URL}/rest/v1/facturas`, {
@@ -363,6 +419,20 @@
         function createNewDocument() {
             items = [{ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }];
             removeHousePhoto();
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-email').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('client-address').value = '';
+            
+            // Asigna el siguiente número automático según el tipo de documento
+            document.getElementById('doc-number').value = generarSiguienteNumero(docType);
+            
+            // Restablece las fechas a hoy y +3 días
+            document.getElementById('doc-date').value = todayStr;
+            const d = new Date();
+            d.setDate(d.getDate() + 3);
+            document.getElementById('doc-due-date').value = d.toISOString().split('T')[0];
+
             renderItemsEditor();
         }
 
@@ -372,7 +442,13 @@
             document.getElementById('btn-type-invoice').className = type === 'invoice' ? "flex flex-col items-center p-3.5 rounded-xl border-2 border-forest-900 bg-forest-900 text-white shadow-xs" : "flex flex-col items-center p-3.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-700";
             document.getElementById('house-photo-editor-section').classList.toggle('hidden', type !== 'estimate');
             document.getElementById('btn-action-text').innerText = type === 'estimate' ? "Print / View Estimate" : "Print / View Invoice";
+            
+            // Asigna el número automático correspondiente al cambiar entre estimate e invoice
+            document.getElementById('doc-number').value = generarSiguienteNumero(type);
         }
+
+        // Inicializa el primer número automático al cargar la página
+        document.getElementById('doc-number').value = generarSiguienteNumero('estimate');
 
         function handleHousePhotoUpload(event) {
             const file = event.target.files[0];
@@ -420,8 +496,14 @@
                                 <textarea rows="2" placeholder="Material details..." oninput="updateMatText(${sIndex}, ${mIndex}, 'customMaterial', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2.5">${mat.customMaterial}</textarea>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-1">
-                                <input type="text" value="${mat.qty}" placeholder="Qty" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
-                                <input type="number" value="${mat.rate}" min="0" step="0.01" placeholder="0.00" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                <div>
+                                    <label class="block text-[9px] font-bold text-slate-400">Qty (Número o Texto)</label>
+                                    <input type="text" value="${mat.qty}" oninput="updateMatText(${sIndex}, ${mIndex}, 'qty', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-slate-400">Unit Rate ($)</label>
+                                    <input type="number" value="${mat.rate}" min="0" step="0.01" oninput="updateMatText(${sIndex}, ${mIndex}, 'rate', this.value)" class="w-full text-xs bg-slate-50 border border-slate-300 rounded-xl p-2 text-center font-bold">
+                                </div>
                             </div>
                         </div>
                     `;
@@ -459,23 +541,52 @@
         function updateServiceSelect(sIndex, field, val) { items[sIndex][field] = parseInt(val); renderItemsEditor(); }
         function updateServiceText(sIndex, field, val) { items[sIndex][field] = field === 'laborRate' ? parseFloat(val) || 0 : val; }
         function updateMatSelect(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseInt(val); renderItemsEditor(); }
-        function updateMatText(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = field === 'rate' ? parseFloat(val) || 0 : val; }
+        function updateMatText(sIndex, mIndex, field, val) { 
+            items[sIndex].materials[mIndex][field] = val; 
+        }
 
         function gatherDocumentData() {
-            let matSubtotal = 0, laborTotal = 0;
-            items.forEach(item => {
-                laborTotal += (item.laborRate || 0);
-                item.materials.forEach(mat => {
-                    matSubtotal += (parseFloat(mat.qty) || 1) * (parseFloat(mat.rate) || 0);
+            let matSubtotal = 0;
+            let laborTotal = 0;
+
+            const processedItems = items.map(item => {
+                const labor = parseFloat(item.laborRate) || 0;
+                laborTotal += labor;
+
+                const processedMaterials = item.materials.map(mat => {
+                    const rateVal = parseFloat(mat.rate) || 0;
+                    let lineTot = 0;
+
+                    // Si es número multiplica, si es texto ("varias") se guarda pero no suma al dinero
+                    const numericQty = parseFloat(mat.qty);
+                    if (!isNaN(numericQty) && String(mat.qty).trim() !== '') {
+                        lineTot = numericQty * rateVal;
+                        matSubtotal += lineTot;
+                    }
+
+                    return {
+                        materialIndex: mat.materialIndex,
+                        customMaterial: mat.customMaterial,
+                        qty: mat.qty,
+                        rate: rateVal
+                    };
                 });
+
+                return {
+                    serviceIndex: item.serviceIndex,
+                    customService: item.customService,
+                    laborRate: labor,
+                    materials: processedMaterials
+                };
             });
+
             const tax = matSubtotal * 0.07;
             const grandTotal = matSubtotal + tax + laborTotal;
 
             return {
                 type: docType,
                 number: document.getElementById('doc-number').value,
-                date: document.getElementById('doc-date').value || new Date().toISOString().split('T')[0],
+                date: document.getElementById('doc-date').value || todayStr,
                 dueDate: document.getElementById('doc-due-date').value,
                 terms: document.getElementById('doc-terms').value,
                 clientName: document.getElementById('client-name').value,
@@ -484,7 +595,7 @@
                 clientAddress: document.getElementById('client-address').value,
                 housePhoto: housePhotoDataUrl,
                 houseCaption: document.getElementById('house-photo-caption')?.value || '',
-                items: items,
+                items: processedItems,
                 grandTotal: grandTotal,
                 serviceOptions: serviceOptions,
                 materialOptions: materialOptions
@@ -503,14 +614,30 @@
             if (!data.clientName) { alert("Please enter the client name first."); return; }
             await guardarFacturaEnSupabase(data.number, data);
             
+            // Carga los enlaces de Stripe en el selector del modal
             const links = JSON.parse(localStorage.getItem('elite_payment_links') || '[]');
-            const defaultLink = links.length > 0 ? links[0].url : 'https://buy.stripe.com/...';
-            data.paymentLink = defaultLink;
+            const selectEl = document.getElementById('modal-stripe-select');
+            selectEl.innerHTML = '<option value="">-- Sin enlace de Stripe --</option>';
+            links.forEach(l => {
+                selectEl.innerHTML += `<option value="${l.url}">${l.name}</option>`;
+            });
 
-            const shortLink = `https://factura.elitepointpropertyservices.com/?doc=${data.number}`;
-            const msg = `Hi ${data.clientName}, here is your Elite Point document (${data.number}):\n${shortLink}\nThank you for your business!`;
-            document.getElementById('payment-text-box').value = msg;
+            updatePaymentLinkText();
             document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function updatePaymentLinkText() {
+            const data = gatherDocumentData();
+            const selectedStripeUrl = document.getElementById('modal-stripe-select').value;
+            const shortLink = `https://factura.elitepointpropertyservices.com/client.html?doc=${data.number}`;
+            
+            let msg = `Hi ${data.clientName}, here is your Elite Point document (${data.number}):\n${shortLink}\n`;
+            if (selectedStripeUrl) {
+                msg += `You can pay securely via Stripe here:\n${selectedStripeUrl}\n`;
+            }
+            msg += `Thank you for your business!`;
+
+            document.getElementById('payment-text-box').value = msg;
         }
 
         function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
@@ -611,7 +738,7 @@
                     <td class="py-2.5 px-3">${doc.clientName || 'N/A'}</td>
                     <td class="py-2.5 px-3 text-right font-extrabold text-gold-700">$${(doc.grandTotal || 0).toFixed(2)}</td>
                     <td class="py-2.5 px-3 text-center space-x-1">
-                        <a href="factura.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1"><i class="fa-solid fa-eye"></i></a>
+                        <a href="factura.html?doc=${doc.number}" target="_blank" class="text-sky-600 hover:underline px-1" title="Ver Vista Gestión"><i class="fa-solid fa-eye"></i></a>
                         <button onclick="eliminarFacturaSupabase('${doc.number}')" class="text-red-500 hover:text-red-700 px-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
