@@ -315,11 +315,9 @@
             document.getElementById('doc-title-header').innerText = isEstimate ? 'ESTIMATE' : 'INVOICE';
             document.getElementById('pdf-doc-number').innerText = currentDocData.number;
 
-            // FECHA DE EMISIÓN: Fecha actual del día
             const issueDate = currentDocData.date || new Date().toISOString().split('T')[0];
             document.getElementById('pdf-doc-date').innerText = `Date: ${issueDate}`;
 
-            // FECHA DE VIGENCIA: Válida por 3 días
             let dueDate = currentDocData.dueDate;
             if (issueDate) {
                 const d = new Date(issueDate + 'T00:00:00');
@@ -398,12 +396,17 @@
             if (!globalLoadedDoc) return "";
             const settings = JSON.parse(localStorage.getItem('elite_company_cfg') || '{}');
             const template = settings.msg || "Hi {client}, here is your Elite Point document ({number}): {link} Thank you for your business!";
-            const currentLink = window.location.href;
+            
+            // Genera el enlace apuntando explícitamente a client.html para el cliente
+            let clientLink = window.location.href.replace('factura.html', 'client.html');
+            if (!clientLink.includes('client.html')) {
+                clientLink = window.location.origin + '/client.html' + window.location.search;
+            }
 
             return template
                 .replace('{client}', globalLoadedDoc.clientName || 'Valued Client')
                 .replace('{number}', globalLoadedDoc.number || 'EST-2026')
-                .replace('{link}', currentLink);
+                .replace('{link}', clientLink);
         }
 
         function sendPaymentSMS() {
