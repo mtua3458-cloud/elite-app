@@ -227,7 +227,8 @@
             "Digital Programmable Outdoor Timer",
             "Waterproof Connection Box & Safety Enclosures",
             "Holiday Wreaths & Garlands Decor",
-            "✨ Custom Material"
+            "✨ Custom Material",
+            "🚫 No material"
         ];
 
         let globalLoadedDoc = null;
@@ -365,6 +366,11 @@
                             const originalMatName = mat.materialIndex === materialOptions.length - 1 
                                 ? (mat.customMaterial || 'Custom Material') 
                                 : materialOptions[mat.materialIndex];
+
+                            // 🚫 REGLA DE "NO MATERIAL": Si está vacío, dice "no material" o tiene el emoji, lo saltamos
+                            if (!originalMatName || originalMatName.toLowerCase().includes('no material') || originalMatName.toLowerCase().includes('🚫')) {
+                                return;
+                            }
 
                             const qty = mat.qty;
                             const rate = parseFloat(mat.rate) || 0;
