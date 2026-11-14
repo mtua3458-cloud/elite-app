@@ -60,7 +60,6 @@
                 <button onclick="openShareModal('sms')" class="px-3 py-2 text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all shadow flex items-center gap-1.5">
                     <i class="fa-solid fa-comment-sms"></i> Send SMS
                 </button>
-                <!-- BOTÓN TORQUITA (AJUSTES DE FACTURA) -->
                 <button onclick="openSettingsModal()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow" title="Invoice Settings">
                     <i class="fa-solid fa-gear text-sm"></i>
                 </button>
@@ -72,35 +71,37 @@
     <main class="max-w-3xl mx-auto px-2 sm:px-4 pt-6">
         <div id="print-document-sheet" class="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-10 space-y-6">
             
-            <!-- CABECERA CENTRADA: LOGO, DATOS CORPORATIVOS Y FIRMA -->
-            <div class="flex flex-col items-center justify-center text-center border-b border-slate-100 pb-6 space-y-2.5">
-                <div class="bg-forest-950 p-2.5 rounded-2xl border border-gold-500/40 shadow-inner">
-                    <img id="pdf-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('pdf-logo-fallback').classList.remove('hidden');" alt="Elite Point" class="h-14 w-auto object-contain mx-auto">
-                    <span id="pdf-logo-fallback" class="hidden font-display font-bold text-gold-400 text-base px-2">ELITE POINT PROPERTY SERVICES</span>
-                </div>
+            <!-- CABECERA DISTRIBUIDA (IZQUIERDA: EMPRESA Y DATOS / DERECHA: NÚMERO Y FECHAS) -->
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-6">
                 
-                <!-- DATOS DE LA FIRMA CORPORATIVA (DINÁMICOS) -->
-                <div class="text-xs space-y-0.5 pt-1">
-                    <p id="comp-name" class="font-bold text-forest-900">Javier Maturana</p>
-                    <p id="comp-role" class="text-slate-500 italic text-[11px]">Owner & Operations Manager</p>
+                <!-- BLOQUE IZQUIERDO: LOGO, NOMBRE EMPRESA, JAVIER MATURANA Y CONTACTO -->
+                <div class="space-y-3">
+                    <div class="bg-forest-950 p-2.5 rounded-2xl border border-gold-500/40 shadow-inner inline-block">
+                        <img id="pdf-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('pdf-logo-fallback').classList.remove('hidden');" alt="Elite Point" class="h-12 w-auto object-contain">
+                        <span id="pdf-logo-fallback" class="hidden font-display font-bold text-gold-400 text-sm px-2">ELITE POINT</span>
+                    </div>
+                    
+                    <div>
+                        <h2 class="font-display font-bold text-sm text-forest-900 tracking-wider">ELITE POINT PROPERTY SERVICES</h2>
+                        <p id="comp-name" class="text-xs font-bold text-slate-700 mt-1">Javier Maturana</p>
+                        <p id="comp-role" class="text-[11px] text-slate-500 italic">Owner & Operations Manager</p>
+                    </div>
+
+                    <div class="text-[11px] text-slate-600 space-y-0.5 font-medium">
+                        <p><i class="fa-solid fa-phone text-gold-600 mr-1.5 w-3"></i> <span id="comp-phone">(463) 287-8167</span></p>
+                        <p><i class="fa-solid fa-envelope text-gold-600 mr-1.5 w-3"></i> <span id="comp-email">info@elitepointpropertyservices.com</span></p>
+                        <p><i class="fa-solid fa-globe text-gold-600 mr-1.5 w-3"></i> <span id="comp-web">elitepointpropertyservices.com</span></p>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center items-center gap-3 text-[11px] text-slate-600 font-medium pt-1">
-                    <span><i class="fa-solid fa-phone text-gold-600 mr-1"></i> <span id="comp-phone">(463) 287-8167</span></span>
-                    <span>•</span>
-                    <span><i class="fa-solid fa-globe text-gold-600 mr-1"></i> <span id="comp-web">elitepointpropertyservices.com</span></span>
-                    <span>•</span>
-                    <span><i class="fa-solid fa-envelope text-gold-600 mr-1"></i> <span id="comp-email">info@elitepointpropertyservices.com</span></span>
-                </div>
-
-                <div class="pt-2">
-                    <h1 id="doc-title-header" class="font-display font-bold text-2xl text-forest-900 uppercase tracking-wider">ESTIMATE</h1>
-                    <p class="text-xs font-bold text-slate-500 mt-0.5"><span id="pdf-doc-number">EST-2026-001</span></p>
-                </div>
-                <div class="flex gap-4 text-xs text-slate-500 pt-1">
-                    <span id="pdf-doc-date">Date: --/--/----</span>
-                    <span>•</span>
-                    <span id="pdf-doc-due">Valid Until: --/--/----</span>
+                <!-- BLOQUE DERECHO: TIPO DE DOCUMENTO, NÚMERO Y FECHAS -->
+                <div class="text-left sm:text-right space-y-1.5 w-full sm:w-auto">
+                    <h1 id="doc-title-header" class="font-display font-bold text-xl sm:text-2xl text-forest-900 uppercase tracking-wider">ESTIMATE</h1>
+                    <p class="text-xs font-extrabold text-gold-700"><span id="pdf-doc-number">EST-2026-001</span></p>
+                    <div class="text-xs text-slate-500 space-y-0.5 pt-1">
+                        <p id="pdf-doc-date">Date: --/--/----</p>
+                        <p id="pdf-doc-due">Valid Until: --/--/----</p>
+                    </div>
                 </div>
             </div>
 
@@ -120,7 +121,7 @@
 
             <!-- FOTO DE LA CASA (SI ES ESTIMATE Y TIENE FOTO) -->
             <div id="pdf-house-section" class="hidden space-y-2">
-                <h3 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-house-chimney text-gold-600"></i> Property / Evaluated Area</h3>
+                <h3 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider">Property / Evaluated Area</h3>
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-center space-y-2">
                     <img id="pdf-house-img" class="max-h-64 rounded-xl object-contain mx-auto border border-slate-200" alt="Property Photo">
                     <p id="pdf-house-caption" class="text-xs text-slate-600 italic"></p>
@@ -129,7 +130,7 @@
 
             <!-- TABLA DE ARTÍCULOS Y SERVICIOS -->
             <div class="space-y-3">
-                <h3 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-list-check text-gold-600"></i> Scope of Work & Materials</h3>
+                <h3 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider">Scope of Work & Materials</h3>
                 <div class="overflow-x-auto border border-slate-200 rounded-2xl">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] border-b border-slate-200">
@@ -223,7 +224,7 @@
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Plantilla de Mensaje Predeterminada (Gmail/SMS):</label>
                     <textarea id="set-template" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 font-medium text-slate-700"></textarea>
-                    <p class="text-[10px] text-slate-400 mt-1">Usa variables automáticas si lo deseas, o redacta tu texto estándar con el enlace.</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Usa variables como [Client], [Type], [Number], [Link].</p>
                 </div>
             </div>
 
@@ -286,7 +287,6 @@
         let currentDocData = null;
         let currentShareMode = 'sms';
 
-        // --- GESTIÓN DE DATOS CORPORATIVOS DESDE LA TORQUITA ---
         function loadCompanyHeader() {
             const defaults = {
                 name: "Javier Maturana",
@@ -406,9 +406,10 @@
                     const servName = translateService(originalServName);
                     laborTotal += (item.laborRate || 0);
 
+                    // SIN SÍMBOLOS EXTRAÑOS EN EL TÍTULO DE LA SECCIÓN
                     tbody.innerHTML += `
                         <tr class="bg-slate-50/80 font-bold text-forest-900 border-t border-slate-200">
-                            <td colspan="3" class="py-2.5 px-3"><i class="fa-solid fa-wrench text-gold-600 mr-1"></i> Section #${sIndex + 1}: ${servName}</td>
+                            <td colspan="3" class="py-2.5 px-3">Section #${sIndex + 1}: ${servName}</td>
                             <td class="py-2.5 px-3 text-right">$${(item.laborRate || 0).toFixed(2)} <span class="text-[10px] text-slate-400 font-normal">(Labor)</span></td>
                         </tr>
                     `;
