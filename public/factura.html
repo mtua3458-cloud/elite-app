@@ -38,8 +38,17 @@
             </a>
             
             <div class="flex items-center gap-2 shrink-0">
+                <button onclick="sendPaymentSMS()" class="px-3 py-2 text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-comment-sms"></i> SMS
+                </button>
+                <button onclick="sendPaymentEmail()" class="px-3 py-2 text-xs font-extrabold text-white bg-sky-700 hover:bg-sky-800 rounded-xl transition-all shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-envelope"></i> Gmail
+                </button>
                 <button onclick="window.print()" class="px-3 py-2 text-xs font-extrabold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl transition-all shadow flex items-center gap-1.5">
                     <i class="fa-solid fa-print"></i> Print / PDF
+                </button>
+                <button onclick="openSettingsModal()" class="p-2.5 text-gold-400 hover:text-white bg-forest-800 hover:bg-forest-700 rounded-xl transition-all shadow" title="Ajustes de Empresa">
+                    <i class="fa-solid fa-gear text-sm"></i>
                 </button>
             </div>
         </div>
@@ -147,6 +156,53 @@
         </div>
     </main>
 
+    <!-- MODAL DE AJUSTES (TUERQUITA) EN VISTA PÚBLICA -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                <h3 class="font-display font-bold text-base text-forest-900 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-gold-600"></i> Configuración de Empresa & Mensaje
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-600 mb-1">Nombre del Responsable:</label>
+                    <input type="text" id="cfg-name" value="Javier Maturana" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-600 mb-1">Cargo / Role:</label>
+                    <input type="text" id="cfg-role" value="Owner & Operations Manager" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Teléfono:</label>
+                        <input type="text" id="cfg-phone" value="(463) 287-8167" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-600 mb-1">Correo:</label>
+                        <input type="text" id="cfg-email" value="info@elitepointpropertyservices.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-600 mb-1">Website:</label>
+                    <input type="text" id="cfg-web" value="elitepointpropertyservices.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-600 mb-1">Plantilla Mensaje Predeterminado (SMS / Gmail):</label>
+                    <textarea id="cfg-msg" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 font-medium">Hi {client}, here is your Elite Point document ({number}): {link} Thank you for your business!</textarea>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="saveCompanySettings()" class="w-full py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // CONFIGURACIÓN SUPABASE
         const SUPABASE_URL = 'https://seaqcflsurcpqiqyakcb.supabase.co';
@@ -173,6 +229,48 @@
             "✨ Custom Material"
         ];
 
+        let globalLoadedDoc = null;
+
+        function applyCompanySettings() {
+            const settings = JSON.parse(localStorage.getItem('elite_company_cfg') || '{}');
+            if (settings.name) document.getElementById('comp-name').innerText = settings.name;
+            if (settings.role) document.getElementById('comp-role').innerText = settings.role;
+            if (settings.phone) document.getElementById('comp-phone').innerText = settings.phone;
+            if (settings.email) document.getElementById('comp-email').innerText = settings.email;
+            if (settings.web) document.getElementById('comp-web').innerText = settings.web;
+        }
+        applyCompanySettings();
+
+        function openSettingsModal() {
+            const settings = JSON.parse(localStorage.getItem('elite_company_cfg') || '{}');
+            if (settings.name) document.getElementById('cfg-name').value = settings.name;
+            if (settings.role) document.getElementById('cfg-role').value = settings.role;
+            if (settings.phone) document.getElementById('cfg-phone').value = settings.phone;
+            if (settings.email) document.getElementById('cfg-email').value = settings.email;
+            if (settings.web) document.getElementById('cfg-web').value = settings.web;
+            if (settings.msg) document.getElementById('cfg-msg').value = settings.msg;
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveCompanySettings() {
+            const settings = {
+                name: document.getElementById('cfg-name').value,
+                role: document.getElementById('cfg-role').value,
+                phone: document.getElementById('cfg-phone').value,
+                email: document.getElementById('cfg-email').value,
+                web: document.getElementById('cfg-web').value,
+                msg: document.getElementById('cfg-msg').value
+            };
+            localStorage.setItem('elite_company_cfg', JSON.stringify(settings));
+            applyCompanySettings();
+            closeSettingsModal();
+            alert("¡Ajustes guardados con éxito!");
+        }
+
         async function cargarDocumentoDesdeSupabase() {
             const urlParams = new URLSearchParams(window.location.search);
             const docNum = urlParams.get('doc');
@@ -183,7 +281,6 @@
             }
 
             try {
-                // Consultar Supabase filtrando por doc_number
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/facturas?doc_number=eq.${docNum}&select=doc_data`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -194,8 +291,8 @@
                 const data = await response.json();
 
                 if (data && data.length > 0) {
-                    const currentDocData = data[0].doc_data;
-                    renderizarFactura(currentDocData);
+                    globalLoadedDoc = data[0].doc_data;
+                    renderizarFactura(globalLoadedDoc);
                 } else {
                     document.body.innerHTML = "<h3 style='text-align:center; margin-top:50px; font-family:sans-serif;'>Documento no encontrado o enlace inválido.</h3>";
                 }
@@ -217,13 +314,24 @@
             const isEstimate = currentDocData.type === 'estimate';
             document.getElementById('doc-title-header').innerText = isEstimate ? 'ESTIMATE' : 'INVOICE';
             document.getElementById('pdf-doc-number').innerText = currentDocData.number;
-            document.getElementById('pdf-doc-date').innerText = `Date: ${currentDocData.date || 'N/A'}`;
-            document.getElementById('pdf-doc-due').innerText = `${isEstimate ? 'Valid Until' : 'Due Date'}: ${currentDocData.dueDate || 'N/A'}`;
+
+            // FECHA DE EMISIÓN: Fecha actual del día
+            const issueDate = currentDocData.date || new Date().toISOString().split('T')[0];
+            document.getElementById('pdf-doc-date').innerText = `Date: ${issueDate}`;
+
+            // FECHA DE VIGENCIA: Válida por 3 días
+            let dueDate = currentDocData.dueDate;
+            if (issueDate) {
+                const d = new Date(issueDate + 'T00:00:00');
+                d.setDate(d.getDate() + 3);
+                dueDate = d.toISOString().split('T')[0];
+            }
+            document.getElementById('pdf-doc-due').innerText = `${isEstimate ? 'Valid Until' : 'Due Date'}: ${dueDate || 'N/A'}`;
             
-            document.getElementById('pdf-client-name').innerText = currentDocData.client?.name || currentDocData.clientName || 'Valued Client';
-            document.getElementById('pdf-client-address').innerText = currentDocData.client?.address || currentDocData.clientAddress || 'No address specified';
-            document.getElementById('pdf-client-email').innerText = (currentDocData.client?.email || currentDocData.clientEmail) ? `Email: ${currentDocData.client?.email || currentDocData.clientEmail}` : '';
-            document.getElementById('pdf-client-phone').innerText = (currentDocData.client?.phone || currentDocData.clientPhone) ? `Phone: +1 ${currentDocData.client?.phone || currentDocData.clientPhone}` : '';
+            document.getElementById('pdf-client-name').innerText = currentDocData.clientName || 'Valued Client';
+            document.getElementById('pdf-client-address').innerText = currentDocData.clientAddress || 'No address specified';
+            document.getElementById('pdf-client-email').innerText = currentDocData.clientEmail ? `Email: ${currentDocData.clientEmail}` : '';
+            document.getElementById('pdf-client-phone').innerText = currentDocData.clientPhone ? `Phone: +1 ${currentDocData.clientPhone}` : '';
             document.getElementById('pdf-terms').innerText = currentDocData.terms || 'Due on Receipt';
 
             if (isEstimate && currentDocData.housePhoto) {
@@ -286,7 +394,36 @@
             document.getElementById('pdf-total').innerText = `$${grandTotal.toFixed(2)}`;
         }
 
-        // Ejecutar al cargar la página
+        function getFormattedMessage() {
+            if (!globalLoadedDoc) return "";
+            const settings = JSON.parse(localStorage.getItem('elite_company_cfg') || '{}');
+            const template = settings.msg || "Hi {client}, here is your Elite Point document ({number}): {link} Thank you for your business!";
+            const currentLink = window.location.href;
+
+            return template
+                .replace('{client}', globalLoadedDoc.clientName || 'Valued Client')
+                .replace('{number}', globalLoadedDoc.number || 'EST-2026')
+                .replace('{link}', currentLink);
+        }
+
+        function sendPaymentSMS() {
+            if (!globalLoadedDoc || !globalLoadedDoc.clientPhone) {
+                alert("Este documento no tiene un número de teléfono registrado.");
+                return;
+            }
+            const msg = getFormattedMessage();
+            window.open(`sms:+1${globalLoadedDoc.clientPhone}?body=${encodeURIComponent(msg)}`);
+        }
+
+        function sendPaymentEmail() {
+            if (!globalLoadedDoc || !globalLoadedDoc.clientEmail) {
+                alert("Este documento no tiene un correo electrónico registrado.");
+                return;
+            }
+            const msg = getFormattedMessage();
+            window.open(`mailto:${globalLoadedDoc.clientEmail}?subject=Elite%20Point%20Document%20(${globalLoadedDoc.number})&body=${encodeURIComponent(msg)}`);
+        }
+
         cargarDocumentoDesdeSupabase();
     </script>
 </body>
