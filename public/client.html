@@ -31,14 +31,21 @@
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen py-8">
 
     <!-- BOTÓN DISCRETO PARA IMPRIMIR O GUARDAR PDF -->
-    <div class="no-print max-w-3xl mx-auto px-4 mb-4 flex justify-end">
+    <div id="print-btn-container" class="no-print max-w-3xl mx-auto px-4 mb-4 flex justify-end hidden">
         <button onclick="window.print()" class="px-4 py-2 text-xs font-bold text-forest-950 bg-gold-500 hover:bg-gold-400 rounded-xl shadow transition-all flex items-center gap-1.5">
             <i class="fa-solid fa-print"></i> Print / Save PDF
         </button>
     </div>
 
-    <!-- DOCUMENTO EXCLUSIVO PARA EL CLIENTE -->
-    <main class="max-w-3xl mx-auto px-2 sm:px-4">
+    <!-- CONTENEDOR DEL MENSAJE DE ESTADO (CUANDO NO HAY DOCUMENTO) -->
+    <div id="error-message-container" class="max-w-md mx-auto mt-20 p-8 bg-white rounded-3xl shadow-lg border border-slate-200 text-center space-y-3">
+        <div class="text-gold-600 text-3xl"><i class="fa-solid fa-file-circle-exclamation"></i></div>
+        <h3 class="font-display font-bold text-base text-forest-900">Documento no especificado</h3>
+        <p class="text-xs text-slate-500">Por favor, accede a través del enlace válido enviado por Elite Point Property Services.</p>
+    </div>
+
+    <!-- DOCUMENTO EXCLUSIVO PARA EL CLIENTE (OCULTO HASTA CARGAR DATOS) -->
+    <main id="document-main-view" class="max-w-3xl mx-auto px-2 sm:px-4 hidden">
         <div id="print-document-sheet" class="bg-white rounded-3xl shadow-lg border border-slate-200 p-6 sm:p-10 space-y-6">
             
             <div class="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-6">
@@ -62,10 +69,10 @@
 
                 <div class="text-left sm:text-right space-y-1.5 w-full sm:w-auto">
                     <h1 id="doc-title-header" class="font-display font-bold text-xl sm:text-2xl text-forest-900 uppercase tracking-wider">ESTIMATE</h1>
-                    <p class="text-xs font-extrabold text-gold-700"><span id="pdf-doc-number">EST-2026-001</span></p>
+                    <p class="text-xs font-extrabold text-gold-700"><span id="pdf-doc-number">--</span></p>
                     <div class="text-xs text-slate-500 space-y-0.5 pt-1">
-                        <p id="pdf-doc-date">Date: --/--/----</p>
-                        <p id="pdf-doc-due">Valid Until: --/--/----</p>
+                        <p id="pdf-doc-date">Date: --</p>
+                        <p id="pdf-doc-due">Valid Until: --</p>
                     </div>
                 </div>
             </div>
@@ -169,8 +176,16 @@
             const urlParams = new URLSearchParams(window.location.search);
             const docNum = urlParams.get('doc');
 
+            const errorContainer = document.getElementById('error-message-container');
+            const mainView = document.getElementById('document-main-view');
+            const printBtnContainer = document.getElementById('print-btn-container');
+
             if (!docNum) {
-                document.body.innerHTML = "<h3 style='text-align:center; margin-top:100px; font-family:sans-serif; color:#475569;'>No se especificó ningún documento.</h3>";
+                errorContainer.innerHTML = `
+                    <div class="text-gold-600 text-3xl"><i class="fa-solid fa-file-circle-exclamation"></i></div>
+                    <h3 class="font-display font-bold text-base text-forest-900">Documento no especificado</h3>
+                    <p class="text-xs text-slate-500">Por favor, accede a través del enlace válido enviado por Elite Point Property Services.</p>
+                `;
                 return;
             }
 
@@ -185,17 +200,116 @@
                 const data = await response.json();
 
                 if (data && data.length > 0) {
+                    errorContainer.classList.add('hidden');
+                    mainView.classList.remove('hidden');
+                    printBtnContainer.classList.remove('hidden');
                     renderizarDocumentoCliente(data[0].doc_data);
                 } else {
-                    document.body.innerHTML = "<h3 style='text-align:center; margin-top:100px; font-family:sans-serif; color:#475569;'>Documento no encontrado o enlace inválido.</h3>";
+                    errorContainer.innerHTML = `
+                        <div class="text-rose-500 text-3xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <h3 class="font-display font-bold text-base text-forest-900">Documento no encontrado</h3>
+                        <p class="text-xs text-slate-500">El número de documento <strong>${docNum}</strong> no existe o el enlace es inválido.</p>
+                    `;
                 }
             } catch (error) {
                 console.error("Error al conectar con Supabase:", error);
-                document.body.innerHTML = "<h3 style='text-align:center; margin-top:100px; font-family:sans-serif; color:#475569;'>Error al cargar el documento desde la nube.</h3>";
+                errorContainer.innerHTML = `
+                    <div class="text-rose-500 text-3xl"><i class="fa-solid fa-wifi"></i></div>
+                    <h3 class="font-display font-bold text-base text-forest-900">Error de conexión</h3>
+                    <p class="text-xs text-slate-500">No se pudo conectar con la base de datos para cargar el documento.</p>
+                `;
             }
         }
 
         function renderizarDocumentoCliente(d) {
             const isEstimate = d.type === 'estimate';
             document.getElementById('doc-title-header').innerText = isEstimate ? 'ESTIMATE' : 'INVOICE';
-            document.getElementById('pdf-doc
+            document.getElementById('pdf-doc-number').innerText = d.number || '--';
+
+            const issueDate = d.date || new Date().toISOString().split('T')[0];
+            document.getElementById('pdf-doc-date').innerText = `Date: ${issueDate}`;
+
+            let dueDate = d.dueDate;
+            if (issueDate) {
+                const dt = new Date(issueDate + 'T00:00:00');
+                dt.setDate(dt.getDate() + 3);
+                dueDate = dt.toISOString().split('T')[0];
+            }
+            document.getElementById('pdf-doc-due').innerText = `${isEstimate ? 'Valid Until' : 'Due Date'}: ${dueDate || 'N/A'}`;
+            
+            document.getElementById('pdf-client-name').innerText = d.clientName || 'Valued Client';
+            document.getElementById('pdf-client-address').innerText = d.clientAddress || 'No address specified';
+            document.getElementById('pdf-client-email').innerText = d.clientEmail ? `Email: ${d.clientEmail}` : '';
+            document.getElementById('pdf-client-phone').innerText = d.clientPhone ? `Phone: +1 ${d.clientPhone}` : '';
+            document.getElementById('pdf-terms').innerText = d.terms || 'Due on Receipt';
+
+            if (isEstimate && d.housePhoto) {
+                document.getElementById('pdf-house-section').classList.remove('hidden');
+                document.getElementById('pdf-house-img').src = d.housePhoto;
+                document.getElementById('pdf-house-caption').innerText = d.houseCaption || '';
+            }
+
+            const tbody = document.getElementById('pdf-items-tbody');
+            tbody.innerHTML = '';
+
+            let matSubtotal = 0;
+            let laborTotal = 0;
+
+            if (d.items) {
+                d.items.forEach((item, sIndex) => {
+                    const originalServName = item.serviceIndex === serviceOptions.length - 1 
+                        ? (item.customService || 'Custom Service') 
+                        : serviceOptions[item.serviceIndex];
+                
+                    const labor = parseFloat(item.laborRate) || 0;
+                    laborTotal += labor;
+
+                    tbody.innerHTML += `
+                        <tr class="bg-slate-50/80 font-bold text-forest-900 border-t border-slate-200">
+                            <td colspan="3" class="py-2.5 px-3">Section #${sIndex + 1}: ${originalServName}</td>
+                            <td class="py-2.5 px-3 text-right">$${labor.toFixed(2)} <span class="text-[10px] text-slate-400 font-normal">(Labor)</span></td>
+                        </tr>
+                    `;
+
+                    if (item.materials) {
+                        item.materials.forEach(mat => {
+                            const originalMatName = mat.materialIndex === materialOptions.length - 1 
+                                ? (mat.customMaterial || 'Custom Material') 
+                                : materialOptions[mat.materialIndex];
+
+                            const qty = mat.qty;
+                            const rate = parseFloat(mat.rate) || 0;
+                            
+                            const numericQty = parseFloat(qty);
+                            let lineTotal = 0;
+                            if (!isNaN(numericQty) && String(qty).trim() !== '') {
+                                lineTotal = numericQty * rate;
+                                matSubtotal += lineTotal;
+                            }
+
+                            tbody.innerHTML += `
+                                <tr class="hover:bg-slate-50">
+                                    <td class="py-2 px-3 pl-6 text-slate-700">• ${originalMatName}</td>
+                                    <td class="py-2 px-3 text-center text-slate-600">${qty}</td>
+                                    <td class="py-2 px-3 text-right text-slate-600">$${rate.toFixed(2)}</td>
+                                    <td class="py-2 px-3 text-right font-medium text-slate-800">${!isNaN(numericQty) && String(qty).trim() !== '' ? '$' + lineTotal.toFixed(2) : '-'}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                });
+            }
+
+            const tax = matSubtotal * 0.07;
+            const grandTotal = matSubtotal + tax + laborTotal;
+
+            document.getElementById('pdf-subtotal').innerText = `$${matSubtotal.toFixed(2)}`;
+            document.getElementById('pdf-tax').innerText = `$${tax.toFixed(2)}`;
+            document.getElementById('pdf-labor').innerText = `$${laborTotal.toFixed(2)}`;
+            document.getElementById('pdf-total').innerText = `$${grandTotal.toFixed(2)}`;
+        }
+
+        cargarDocumentoCliente();
+    </script>
+</body>
+</html>
