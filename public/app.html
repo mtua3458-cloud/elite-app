@@ -102,7 +102,7 @@
                 <input type="text" id="client-address" placeholder="Property Address" class="w-full text-sm bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5">
             </section>
 
-            <!-- SECCIÓN FOTO DE LA CASA Y DESCRIPCIÓN (SOLO PRESUPUESTO) -->
+            <!-- SECCIÓN FOTO DE LA CASA Y DESCRIPCIÓN -->
             <section id="house-photo-editor-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-extrabold text-forest-900 flex items-center gap-2">
@@ -135,7 +135,7 @@
         </main>
     </div>
 
-    <!-- MODAL PARA ENVIAR ENLACE (GMAIL, SMS O COPIAR) -->
+    <!-- MODAL PARA ENVIAR ENLACE -->
     <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    <!-- MODAL PANEL DE CONTROL Y AJUSTES (TORQUITA) -->
+    <!-- MODAL PANEL DE CONTROL Y AJUSTES -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
@@ -172,10 +172,8 @@
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- CARGAR LOGOTIPO MANUALMENTE -->
             <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-image text-gold-600"></i> Corporate Logo</h4>
-                <p class="text-[11px] text-slate-500">Upload your logo to apply it across the portal and exported invoices/estimates.</p>
                 <div class="flex flex-col sm:flex-row items-center gap-3">
                     <input type="file" id="setting-logo-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-forest-900 file:text-gold-400 hover:file:bg-forest-800 cursor-pointer">
                     <button type="button" onclick="saveCustomLogo()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl text-xs transition-all shadow shrink-0">
@@ -183,88 +181,38 @@
                     </button>
                 </div>
             </div>
-
-            <!-- RESUMEN FINANCIERO Y FILTROS -->
-            <div class="space-y-3">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports</h4>
-                    <select id="dashboard-filter" onchange="filterDashboardData()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
-                        <option value="all">All Records</option>
-                        <option value="day">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Today</p>
-                        <h5 id="dash-day" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
-                    </div>
-                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Week</p>
-                        <h5 id="dash-week" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
-                    </div>
-                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Month</p>
-                        <h5 id="dash-month" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
-                    </div>
-                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">Year</p>
-                        <h5 id="dash-year" class="text-base font-extrabold text-forest-900 mt-0.5">$0.00</h5>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GESTIÓN DE ENLACES DE PAGO PREDETERMINADOS (STRIPE) -->
-            <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-link text-gold-600"></i> Saved Payment Links (Stripe)</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="setting-link-name" placeholder="Name (e.g. Standard Stripe Link)" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
-                    <input type="url" id="setting-link-url" placeholder="https://buy.stripe.com/..." class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
-                    <button onclick="savePaymentLinkSettings()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
-                        <i class="fa-solid fa-floppy-disk"></i> Save Link
-                    </button>
-                </div>
-                <div id="saved-links-container" class="space-y-1.5 pt-1"></div>
-            </div>
-
-            <!-- GESTIÓN DE USUARIOS -->
-            <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-users-gear text-gold-600"></i> Users & Access</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="text" id="setting-user-name" placeholder="Username / Email" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
-                    <input type="password" id="setting-user-pass" placeholder="Password" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5">
-                    <button onclick="addNewUserSetting()" class="py-2.5 bg-forest-900 hover:bg-forest-800 text-gold-400 font-extrabold rounded-xl text-xs transition-all shadow">
-                        <i class="fa-solid fa-user-plus"></i> Add User
-                    </button>
-                </div>
-                <div id="users-setting-list" class="space-y-1 pt-1"></div>
-            </div>
-
-            <!-- HISTORIAL DE DOCUMENTOS CON BOTÓN DE BORRAR -->
-            <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History</h4>
-                <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 sticky top-0">
-                            <tr class="border-b border-slate-200 text-[10px] font-bold text-slate-400 uppercase">
-                                <th class="py-2 px-3">Type / N°</th>
-                                <th class="py-2 px-3">Date</th>
-                                <th class="py-2 px-3">Client</th>
-                                <th class="py-2 px-3 text-right">Total</th>
-                                <th class="py-2 px-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://elite-api.mtua3458.workers.dev";
+        // CONFIGURACIÓN SUPABASE CON TU PUBLISHABLE KEY
+        const SUPABASE_URL = 'https://seaqcflsurcpqiqyakcb.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_GJUTp6ntIw2xZLg-4uaBcA_ygxu8yi7';
+
+        async function guardarFacturaEnSupabase(numeroDoc, datosFactura) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/facturas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Prefer': 'resolution=merge-duplicates,return=minimal'
+                    },
+                    body: JSON.stringify({
+                        doc_number: numeroDoc,
+                        doc_data: datosFactura
+                    })
+                });
+                if (response.ok) {
+                    console.log("¡Factura guardada en Supabase con éxito!");
+                } else {
+                    console.error("Error al sincronizar con Supabase");
+                }
+            } catch (err) {
+                console.error("Error de red con Supabase:", err);
+            }
+        }
 
         function applySavedLogo() {
             const savedLogo = localStorage.getItem('elite_custom_logo');
@@ -285,22 +233,9 @@
             }
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const maxHeight = 160;
-                    const scale = maxHeight / img.height;
-                    canvas.width = img.width * scale;
-                    canvas.height = maxHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    const compressedBase64 = canvas.toDataURL('image/png');
-                    localStorage.setItem('elite_custom_logo', compressedBase64);
-                    applySavedLogo();
-                    alert("Logo updated successfully across the system!");
-                };
-                img.src = e.target.result;
+                localStorage.setItem('elite_custom_logo', e.target.result);
+                applySavedLogo();
+                alert("Logo updated successfully!");
             };
             reader.readAsDataURL(fileInput.files[0]);
         }
@@ -461,314 +396,79 @@
         function addItemCard() { items.push({ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }); renderItemsEditor(); }
         function removeServiceItem(index) { items.splice(index, 1); if (items.length === 0) addItemCard(); renderItemsEditor(); }
         function addMaterialToService(sIndex) { items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }); renderItemsEditor(); }
-        function removeMaterial(sIndex, mIndex) { items[sIndex].materials.splice(mIndex, 1); if (items[sIndex].materials.length === 0) { items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }); } renderItemsEditor(); }
-        function updateServiceSelect(index, field, val) { items[index][field] = parseInt(val) || 0; renderItemsEditor(); }
-        function updateMatSelect(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseInt(val) || 0; renderItemsEditor(); }
-        function updateServiceText(index, field, val) { items[index][field] = field === 'laborRate' ? (parseFloat(val) || 0) : val; }
-        function updateMatText(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = field === 'rate' ? (parseFloat(val) || 0) : val; }
+        function removeMaterial(sIndex, mIndex) { items[sIndex].materials.splice(mIndex, 1); if (items[sIndex].materials.length === 0) items[sIndex].materials.push({ materialIndex: 0, customMaterial: '', qty: '1', rate: 0 }); renderItemsEditor(); }
 
-        function getPayloadData() {
-            const docNum = document.getElementById('doc-number').value.trim() || 'EST-2026-001';
-            let defaultLink = "";
-            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            if (links.length > 0) defaultLink = links[0].url;
+        function updateServiceSelect(sIndex, field, val) { items[sIndex][field] = parseInt(val); renderItemsEditor(); }
+        function updateServiceText(sIndex, field, val) { items[sIndex][field] = field === 'laborRate' ? parseFloat(val) || 0 : val; }
+        function updateMatSelect(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = parseInt(val); renderItemsEditor(); }
+        function updateMatText(sIndex, mIndex, field, val) { items[sIndex].materials[mIndex][field] = field === 'rate' ? parseFloat(val) || 0 : val; }
 
+        function gatherDocumentData() {
             return {
                 type: docType,
-                number: docNum,
+                number: document.getElementById('doc-number').value,
                 date: document.getElementById('doc-date').value,
                 dueDate: document.getElementById('doc-due-date').value,
                 terms: document.getElementById('doc-terms').value,
-                clientName: document.getElementById('client-name').value.trim() || 'Valued Client',
-                clientEmail: document.getElementById('client-email').value,
-                clientPhone: document.getElementById('client-phone').value.trim(),
-                clientAddress: document.getElementById('client-address').value,
-                paymentLink: defaultLink,
-                customLogo: localStorage.getItem('elite_custom_logo') || null,
+                client: {
+                    name: document.getElementById('client-name').value,
+                    email: document.getElementById('client-email').value,
+                    phone: document.getElementById('client-phone').value,
+                    address: document.getElementById('client-address').value
+                },
                 housePhoto: housePhotoDataUrl,
-                houseCaption: document.getElementById('house-photo-caption').value,
-                items: items,
-                serviceOptions: serviceOptions,
-                materialOptions: materialOptions
+                houseCaption: document.getElementById('house-photo-caption')?.value || '',
+                items: items
             };
-        }
-
-        async function saveToCloudflareKV(docData) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(docData)
-                });
-                return await response.json();
-            } catch (err) {
-                console.error("Error sincronizando con la nube:", err);
-                return null;
-            }
         }
 
         async function goToPrintPage() {
-            const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Please enter a document number."); return; }
-            const docData = getPayloadData();
-            
-            localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
-            await saveToCloudflareKV(docData);
-            
-            window.location.href = `factura.html?doc=${docNum}`;
+            const data = gatherDocumentData();
+            if (!data.client.name) {
+                alert("Please enter the client name.");
+                return;
+            }
+            localStorage.setItem('elite_current_doc', JSON.stringify(data));
+            await guardarFacturaEnSupabase(data.number, data);
+            window.location.href = `print.html?doc=${data.number}`;
         }
 
         async function openPaymentLinkModal() {
-            const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Please enter a document number."); return; }
-            
-            const docData = getPayloadData();
-            localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
-            await saveToCloudflareKV(docData);
-
-            const clientName = document.getElementById('client-name').value.trim() || 'Valued Client';
-            const clientFirstName = clientName.split(' ')[0];
-            const docTypeStr = docType.toUpperCase();
-            
-            // Aquí obtenemos el link de pago guardado (Stripe) en lugar del enlace del documento
-            let paymentLink = docData.paymentLink || "";
-            if (!paymentLink) {
-                let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-                if (links.length > 0) paymentLink = links[0].url;
+            const data = gatherDocumentData();
+            if (!data.client.name) {
+                alert("Please enter the client name first.");
+                return;
             }
-            const cleanLink = paymentLink || `https://buy.stripe.com/default-link`;
-
-            const defaults = {
-                template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. You can complete your payment securely here: [Link]"
-            };
-            const stored = JSON.parse(localStorage.getItem('elite_company_info') || JSON.stringify(defaults));
-
-            let customMsg = stored.template || defaults.template;
-            customMsg = customMsg
-                .replace(/\[Client\]/g, clientFirstName)
-                .replace(/\[Type\]/g, docTypeStr)
-                .replace(/\[Number\]/g, docNum)
-                .replace(/\[Link\]/g, cleanLink);
-
-            document.getElementById('payment-text-box').value = customMsg;
+            await guardarFacturaEnSupabase(data.number, data);
+            
+            const shortLink = `https://elite-point.pages.dev/?doc=${data.number}`;
+            const msg = `Hi ${data.client.name}, here is your Elite Point document (${data.number}):\n${shortLink}\nThank you for your business!`;
+            document.getElementById('payment-text-box').value = msg;
             document.getElementById('payment-modal').classList.remove('hidden');
         }
 
-        function closePaymentModal() {
-            document.getElementById('payment-modal').classList.add('hidden');
-        }
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
 
         function copyPaymentText() {
-            const textBox = document.getElementById('payment-text-box');
-            textBox.select();
-            navigator.clipboard.writeText(textBox.value);
-            alert("Text copied to clipboard!");
-        }
-
-        function sendPaymentEmail() {
-            const clientEmail = document.getElementById('client-email').value.trim();
-            const docNum = document.getElementById('doc-number').value.trim();
-            const subject = encodeURIComponent(`Elite Point Property Services - Payment Link for ${docType.toUpperCase()} #${docNum}`);
-            const body = encodeURIComponent(document.getElementById('payment-text-box').value);
-            window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
+            const text = document.getElementById('payment-text-box').value;
+            navigator.clipboard.writeText(text);
+            alert("Link copied to clipboard!");
         }
 
         function sendPaymentSMS() {
-            const phoneVal = document.getElementById('client-phone').value.trim();
-            if (!phoneVal) { alert("Missing client phone number."); return; }
-            const phone = `+1${phoneVal.replace(/\D/g,'')}`;
-            const msg = encodeURIComponent(document.getElementById('payment-text-box').value);
-            window.location.href = `sms:${phone}?body=${msg}`;
+            const phone = document.getElementById('client-phone').value;
+            const text = encodeURIComponent(document.getElementById('payment-text-box').value);
+            window.open(`sms:+1${phone}?body=${text}`);
         }
 
-        function openSettingsModal() {
-            loadDashboardData();
-            document.getElementById('settings-modal').classList.remove('hidden');
+        function sendPaymentEmail() {
+            const email = document.getElementById('client-email').value;
+            const text = encodeURIComponent(document.getElementById('payment-text-box').value);
+            window.open(`mailto:${email}?subject=Elite%20Point%20Document&body=${text}`);
         }
 
-        function closeSettingsModal() {
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
-
-        function calculateDocTotal(doc) {
-            let matSub = 0, laborSub = 0;
-            if (doc.items) {
-                doc.items.forEach(item => {
-                    laborSub += (item.laborRate || 0);
-                    if (item.materials) {
-                        item.materials.forEach(mat => {
-                            let q = parseFloat(mat.qty) || 1;
-                            matSub += q * (mat.rate || 0);
-                        });
-                    }
-                });
-            }
-            let tax = matSub * 0.07;
-            return matSub + tax + laborSub;
-        }
-
-        let cachedDocs = [];
-        function loadDashboardData() {
-            cachedDocs = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('elite_doc_')) {
-                    try { cachedDocs.push(JSON.parse(localStorage.getItem(key))); } catch(e){}
-                }
-            }
-            renderDashboardStats(cachedDocs);
-            renderSavedLinksList();
-            renderUsersSettingList();
-        }
-
-        function renderDashboardStats(docs) {
-            let totalDay = 0, totalWeek = 0, totalMonth = 0, totalYear = 0;
-            const now = new Date();
-            const tbody = document.getElementById('dash-docs-tbody');
-            tbody.innerHTML = '';
-
-            if (docs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No documents registered.</td></tr>`;
-            }
-
-            docs.forEach(doc => {
-                const total = calculateDocTotal(doc);
-                const dDate = new Date(doc.date || Date.now());
-
-                if (dDate.toDateString() === now.toDateString()) totalDay += total;
-                if (isSameWeek(dDate, now)) totalWeek += total;
-                if (dDate.getMonth() === now.getMonth() && dDate.getFullYear() === now.getFullYear()) totalMonth += total;
-                if (dDate.getFullYear() === now.getFullYear()) totalYear += total;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="py-2.5 px-3 font-bold text-forest-900 uppercase">${doc.type} <br><span class="text-slate-400 font-normal">#${doc.number}</span></td>
-                        <td class="py-2.5 px-3 text-slate-600">${doc.date}</td>
-                        <td class="py-2.5 px-3 font-medium text-slate-800">${doc.clientName}</td>
-                        <td class="py-2.5 px-3 text-right font-extrabold text-forest-900">$${total.toFixed(2)}</td>
-                        <td class="py-2.5 px-3 text-center space-x-1">
-                            <a href="factura.html?doc=${doc.number}" target="_blank" class="px-2 py-1 bg-forest-900 text-gold-400 rounded text-[10px] font-bold">View</a>
-                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Delete Document"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('dash-day').innerText = `$${totalDay.toFixed(2)}`;
-            document.getElementById('dash-week').innerText = `$${totalWeek.toFixed(2)}`;
-            document.getElementById('dash-month').innerText = `$${totalMonth.toFixed(2)}`;
-            document.getElementById('dash-year').innerText = `$${totalYear.toFixed(2)}`;
-        }
-
-        function deleteDocument(docNum) {
-            if (confirm(`Are you sure you want to delete document #${docNum}?`)) {
-                localStorage.removeItem(`elite_doc_${docNum}`);
-                loadDashboardData();
-                alert(`Document #${docNum} deleted successfully.`);
-            }
-        }
-
-        function isSameWeek(d1, d2) {
-            const onejan = new Date(d1.getFullYear(), 0, 1);
-            const week1 = Math.ceil((((d1 - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-            const week2 = Math.ceil((((d2 - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-            return week1 === week2 && d1.getFullYear() === d2.getFullYear();
-        }
-
-        function filterDashboardData() {
-            const filter = document.getElementById('dashboard-filter').value;
-            const now = new Date();
-            let filtered = cachedDocs.filter(doc => {
-                const d = new Date(doc.date || Date.now());
-                if (filter === 'day') return d.toDateString() === now.toDateString();
-                if (filter === 'week') return isSameWeek(d, now);
-                if (filter === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                if (filter === 'year') return d.getFullYear() === now.getFullYear();
-                return true;
-            });
-            renderDashboardStats(filtered);
-        }
-
-        function savePaymentLinkSettings() {
-            const name = document.getElementById('setting-link-name').value.trim();
-            const url = document.getElementById('setting-link-url').value.trim();
-            if (!name || !url) { alert("Please enter name and Stripe payment link."); return; }
-
-            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            links.push({ name, url });
-            localStorage.setItem('elite_pay_links', JSON.stringify(links));
-
-            document.getElementById('setting-link-name').value = '';
-            document.getElementById('setting-link-url').value = '';
-            renderSavedLinksList();
-            alert("Payment link saved successfully!");
-        }
-
-        function renderSavedLinksList() {
-            const container = document.getElementById('saved-links-container');
-            container.innerHTML = '';
-            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            if (links.length === 0) {
-                container.innerHTML = `<p class="text-[11px] text-slate-400">No payment links saved.</p>`;
-                return;
-            }
-            links.forEach((link, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
-                        <div class="truncate mr-2"><strong class="text-forest-900">${link.name}:</strong> <a href="${link.url}" target="_blank" class="text-blue-600 underline truncate">${link.url}</a></div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button onclick="deletePaymentLink(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function deletePaymentLink(idx) {
-            let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            links.splice(idx, 1);
-            localStorage.setItem('elite_pay_links', JSON.stringify(links));
-            renderSavedLinksList();
-        }
-
-        function addNewUserSetting() {
-            const u = document.getElementById('setting-user-name').value.trim();
-            const p = document.getElementById('setting-user-pass').value.trim();
-            if (!u || !p) { alert("Please enter username and password."); return; }
-
-            let users = JSON.parse(localStorage.getItem('elite_users') || '[{"user":"javier","pass":"Elite2026"}]');
-            users.push({ user: u, pass: p });
-            localStorage.setItem('elite_users', JSON.stringify(users));
-
-            document.getElementById('setting-user-name').value = '';
-            document.getElementById('setting-user-pass').value = '';
-            renderUsersSettingList();
-            alert("User registered successfully!");
-        }
-
-        function renderUsersSettingList() {
-            const container = document.getElementById('users-setting-list');
-            container.innerHTML = '';
-            let users = JSON.parse(localStorage.getItem('elite_users') || '[{"user":"javier","pass":"Elite2026"}]');
-            users.forEach((usr, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
-                        <span><i class="fa-solid fa-user-shield text-forest-900"></i> <strong>${usr.user}</strong></span>
-                        ${idx > 0 ? `<button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-[10px] text-slate-400">Principal</span>'}
-                    </div>
-                `;
-            });
-        }
-
-        function deleteUserSetting(idx) {
-            let users = JSON.parse(localStorage.getItem('elite_users') || '[]');
-            users.splice(idx, 1);
-            localStorage.setItem('elite_users', JSON.stringify(users));
-            renderUsersSettingList();
-        }
-
-        document.getElementById('doc-date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('doc-due-date').value = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
         renderItemsEditor();
     </script>
 </body>
