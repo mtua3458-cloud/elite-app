@@ -469,8 +469,9 @@
 
         function getPayloadData() {
             const docNum = document.getElementById('doc-number').value.trim() || 'EST-2026-001';
+            let defaultLink = "";
             let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
-            let defaultPayLink = links.length > 0 ? links[0].url : '';
+            if (links.length > 0) defaultLink = links[0].url;
 
             return {
                 type: docType,
@@ -482,7 +483,7 @@
                 clientEmail: document.getElementById('client-email').value,
                 clientPhone: document.getElementById('client-phone').value.trim(),
                 clientAddress: document.getElementById('client-address').value,
-                paymentLink: defaultPayLink,
+                paymentLink: defaultLink,
                 customLogo: localStorage.getItem('elite_custom_logo') || null,
                 housePhoto: housePhotoDataUrl,
                 houseCaption: document.getElementById('house-photo-caption').value,
@@ -501,14 +502,14 @@
                 });
                 return await response.json();
             } catch (err) {
-                console.error("Cloud sync error:", err);
+                console.error("Error sincronizando con la nube:", err);
                 return null;
             }
         }
 
         async function goToPrintPage() {
             const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Please enter the document number."); return; }
+            if (!docNum) { alert("Please enter a document number."); return; }
             const docData = getPayloadData();
             
             localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
@@ -519,7 +520,7 @@
 
         async function openPaymentLinkModal() {
             const docNum = document.getElementById('doc-number').value.trim();
-            if (!docNum) { alert("Please enter the document number."); return; }
+            if (!docNum) { alert("Please enter a document number."); return; }
             
             const docData = getPayloadData();
             localStorage.setItem(`elite_doc_${docNum}`, JSON.stringify(docData));
@@ -554,26 +555,25 @@
             const textBox = document.getElementById('payment-text-box');
             textBox.select();
             navigator.clipboard.writeText(textBox.value);
-            alert("Link and text copied to clipboard!");
+            alert("Text copied to clipboard!");
+        }
+
+        function sendPaymentEmail() {
+            const clientEmail = document.getElementById('client-email').value.trim();
+            const docNum = document.getElementById('doc-number').value.trim();
+            const subject = encodeURIComponent(`Elite Point Property Services - ${docType.toUpperCase()} #${docNum}`);
+            const body = encodeURIComponent(document.getElementById('payment-text-box').value);
+            window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
         }
 
         function sendPaymentSMS() {
             const phoneVal = document.getElementById('client-phone').value.trim();
-            if (!phoneVal) { alert("Client phone number is missing."); return; }
+            if (!phoneVal) { alert("Missing client phone number."); return; }
             const phone = `+1${phoneVal.replace(/\D/g,'')}`;
             const msg = encodeURIComponent(document.getElementById('payment-text-box').value);
             window.location.href = `sms:${phone}?body=${msg}`;
         }
 
-        function sendPaymentEmail() {
-            const clientEmail = document.getElementById('client-email').value.trim();
-            if (!clientEmail) { alert("Client email address is missing."); return; }
-            const subject = encodeURIComponent(`Elite Point Property Services - Document #${document.getElementById('doc-number').value}`);
-            const body = encodeURIComponent(document.getElementById('payment-text-box').value);
-            window.location.href = `mailto:${clientEmail}?subject=${subject}&body=${body}`;
-        }
-
-        // PANEL DE AJUSTES (TORQUITA)
         function openSettingsModal() {
             loadDashboardData();
             document.getElementById('settings-modal').classList.remove('hidden');
@@ -621,7 +621,7 @@
             tbody.innerHTML = '';
 
             if (docs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No documents recorded.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No documents registered.</td></tr>`;
             }
 
             docs.forEach(doc => {
@@ -641,7 +641,7 @@
                         <td class="py-2.5 px-3 text-right font-extrabold text-forest-900">$${total.toFixed(2)}</td>
                         <td class="py-2.5 px-3 text-center space-x-1">
                             <a href="factura.html?doc=${doc.number}" target="_blank" class="px-2 py-1 bg-forest-900 text-gold-400 rounded text-[10px] font-bold">View</a>
-                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Delete Document"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -685,7 +685,7 @@
         function savePaymentLinkSettings() {
             const name = document.getElementById('setting-link-name').value.trim();
             const url = document.getElementById('setting-link-url').value.trim();
-            if (!name || !url) { alert("Please enter both name and payment link URL."); return; }
+            if (!name || !url) { alert("Please enter name and Stripe payment link."); return; }
 
             let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
             links.push({ name, url });
@@ -694,7 +694,7 @@
             document.getElementById('setting-link-name').value = '';
             document.getElementById('setting-link-url').value = '';
             renderSavedLinksList();
-            alert("Payment link saved!");
+            alert("Payment link saved successfully!");
         }
 
         function renderSavedLinksList() {
@@ -702,7 +702,7 @@
             container.innerHTML = '';
             let links = JSON.parse(localStorage.getItem('elite_pay_links') || '[]');
             if (links.length === 0) {
-                container.innerHTML = `<p class="text-[11px] text-slate-400">No saved links yet. Add your Stripe links here.</p>`;
+                container.innerHTML = `<p class="text-[11px] text-slate-400">No payment links saved.</p>`;
                 return;
             }
             links.forEach((link, idx) => {
@@ -747,7 +747,7 @@
                 container.innerHTML += `
                     <div class="flex justify-between items-center bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
                         <span><i class="fa-solid fa-user-shield text-forest-900"></i> <strong>${usr.user}</strong></span>
-                        ${idx > 0 ? `<button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-[10px] text-slate-400">Main</span>'}
+                        ${idx > 0 ? `<button onclick="deleteUserSetting(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : '<span class="text-[10px] text-slate-400">Principal</span>'}
                     </div>
                 `;
             });
