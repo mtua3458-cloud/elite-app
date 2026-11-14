@@ -430,10 +430,8 @@
             const docTypeStr = currentDocData.type.toUpperCase();
             const docNum = currentDocData.number;
             
-            // AQUÍ ESTÁ EL ENLACE QUE APUNTA CORRECTAMENTE A TU SUBDOMINIO PÚBLICO
-            // Empaquetamos los datos en el link (data=...) para que la factura cargue de inmediato sin errores
-            const encodedData = btoa(encodeURIComponent(JSON.stringify(currentDocData)).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
-            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNum}&data=${encodedData}`;
+            // ENLACE CORTO, LIMPIO Y PROFESIONAL HACIA TU SUBDOMINIO
+            const cleanLink = `https://factura.elitepointpropertyservices.com/?doc=${docNum}`;
 
             const defaults = {
                 template: "Hi [Client], here is your [Type] #[Number] from Elite Point Property Services. View document here: [Link]"
