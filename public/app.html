@@ -193,7 +193,7 @@
         <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-200 pb-4">
                 <h3 class="font-display font-bold text-lg text-forest-900 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-gold-600"></i> Control Panel & Settings
+                    <i class="fa-solid fa-gear text-gold-600"></i> Control Panel & Settings (Cloud Synced)
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -212,14 +212,7 @@
             <!-- REPORTES FINANCIEROS -->
             <div class="space-y-3">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports</h4>
-                    <select id="dashboard-filter" onchange="filterDashboardData()" class="text-xs font-bold bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5">
-                        <option value="all">All Records</option>
-                        <option value="day">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="year">This Year</option>
-                    </select>
+                    <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-chart-line text-gold-600"></i> Financial Reports (Cloud)</h4>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -267,9 +260,9 @@
                 <div id="users-setting-list" class="space-y-1.5 pt-1"></div>
             </div>
 
-            <!-- HISTORIAL DE DOCUMENTOS CON BOTÓN DE EDITAR Y ELIMINAR -->
+            <!-- HISTORIAL GLOBAL DE DOCUMENTOS DESDE SUPABASE -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates (Abrir y Editar)</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Document History & Estimates (Sincronizado en la Nube)</h4>
                 <div class="overflow-x-auto max-h-56 border border-slate-200 rounded-xl">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 sticky top-0">
@@ -281,7 +274,9 @@
                                 <th class="py-2 px-3 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
+                        <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs">
+                            <tr><td colspan="5" class="py-4 text-center text-slate-400">Cargando desde la nube...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -314,29 +309,9 @@
         }
 
         function generarSiguienteNumero(tipo) {
-            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
             const prefix = tipo === 'estimate' ? 'EST' : 'INV';
             const year = new Date().getFullYear();
-            
-            const docsDelTipo = history.filter(d => d.number && d.number.startsWith(`${prefix}-${year}-`));
-            
-            if (docsDelTipo.length === 0) {
-                return `${prefix}-${year}-001`;
-            }
-
-            let maxNum = 0;
-            docsDelTipo.forEach(d => {
-                const parts = d.number.split('-');
-                if (parts.length === 3) {
-                    const n = parseInt(parts[2], 10);
-                    if (!isNaN(n) && n > maxNum) {
-                        maxNum = n;
-                    }
-                }
-            });
-
-            const nextNumStr = String(maxNum + 1).padStart(3, '0');
-            return `${prefix}-${year}-${nextNumStr}`;
+            return `${prefix}-${year}-001`;
         }
 
         async function guardarFacturaEnSupabase(numeroDoc, datosFactura) {
@@ -351,13 +326,8 @@
                     },
                     body: JSON.stringify({ doc_number: numeroDoc, doc_data: datosFactura })
                 });
-                
-                let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-                history = history.filter(d => d.number !== numeroDoc);
-                history.unshift(datosFactura);
-                localStorage.setItem('elite_docs_history', JSON.stringify(history));
             } catch (err) {
-                console.error("Error al sincronizar:", err);
+                console.error("Error al sincronizar con Supabase:", err);
             }
         }
 
@@ -372,14 +342,34 @@
                     }
                 });
 
-                let history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-                history = history.filter(d => d.number !== numeroDoc);
-                localStorage.setItem('elite_docs_history', JSON.stringify(history));
-
                 loadDashboardData();
                 alert("Documento eliminado con éxito.");
             } catch (err) {
                 console.error("Error al eliminar:", err);
+            }
+        }
+
+        // VARIABLE GLOBAL PARA GUARDAR EL HISTORIAL CARGADO DESDE LA NUBE
+        let cloudDocumentsHistory = [];
+
+        async function cargarDocumentoParaEditar(numeroDoc) {
+            const encontrado = cloudDocumentsHistory.find(d => d.number === numeroDoc);
+            if (encontrado) {
+                aplicarDatosAlEditor(encontrado);
+            } else {
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/facturas?doc_number=eq.${numeroDoc}&select=doc_data`, {
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                    });
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        aplicarDatosAlEditor(data[0].doc_data);
+                    } else {
+                        alert("No se encontró el documento en la nube.");
+                    }
+                } catch (err) {
+                    alert("Error al cargar el documento.");
+                }
             }
         }
 
@@ -410,16 +400,6 @@
             items = d.items && d.items.length > 0 ? d.items : [{ serviceIndex: 0, customService: '', laborRate: 150, materials: [{ materialIndex: 0, customMaterial: '', qty: '1', rate: 50 }] }];
             renderItemsEditor();
             closeSettingsModal();
-        }
-
-        function cargarDocumentoParaEditar(numeroDoc) {
-            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-            const encontrado = history.find(d => d.number === numeroDoc);
-            if (encontrado) {
-                aplicarDatosAlEditor(encontrado);
-            } else {
-                alert("No se encontró el documento en el historial local.");
-            }
         }
 
         function applySavedLogo() {
@@ -726,46 +706,61 @@
             document.getElementById('settings-modal').classList.add('hidden');
         }
 
-        function loadDashboardData() {
-            const history = JSON.parse(localStorage.getItem('elite_docs_history') || '[]');
-            let dayTotal = 0, weekTotal = 0, monthTotal = 0, yearTotal = 0;
-            const now = new Date();
-
+        // CARGAR HISTORIAL DIRECTAMENTE DESDE SUPABASE (NUBE COMPARTIDA)
+        async function loadDashboardData() {
             const tbody = document.getElementById('dash-docs-tbody');
-            tbody.innerHTML = '';
+            tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">Sincronizando con la nube...</td></tr>`;
 
-            if (history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No hay documentos guardados aún.</td></tr>`;
-            }
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/facturas?select=doc_number,doc_data`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                const rows = await response.json();
 
-            history.forEach(d => {
-                const total = d.total || 0;
-                const dDate = new Date(d.date || now);
+                cloudDocumentsHistory = rows.map(r => r.doc_data);
                 
-                if (d.date === todayStr) dayTotal += total;
-                if (now - dDate <= 7 * 24 * 60 * 60 * 1000) weekTotal += total;
-                if (dDate.getMonth() === now.getMonth() && dDate.getFullYear() === now.getFullYear()) monthTotal += total;
-                if (dDate.getFullYear() === now.getFullYear()) yearTotal += total;
+                let dayTotal = 0, weekTotal = 0, monthTotal = 0, yearTotal = 0;
+                const now = new Date();
+                tbody.innerHTML = '';
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="py-2.5 px-3 font-bold text-forest-900">${d.number}</td>
-                        <td class="py-2.5 px-3 text-slate-600">${d.date}</td>
-                        <td class="py-2.5 px-3 text-slate-700">${d.clientName || 'N/A'}</td>
-                        <td class="py-2.5 px-3 text-right font-bold text-gold-700">$${total.toFixed(2)}</td>
-                        <td class="py-2.5 px-3 text-center space-x-1.5">
-                            <button onclick="cargarDocumentoParaEditar('${d.number}')" class="px-2 py-1 text-[10px] font-bold bg-forest-900 text-gold-400 rounded-lg hover:bg-forest-800" title="Cargar y Editar"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
-                            <a href="factura.html?doc=${d.number}" target="_blank" class="text-forest-900 hover:text-gold-600 p-1" title="Ver Vista Previa"><i class="fa-solid fa-eye"></i></a>
-                            <button onclick="eliminarFacturaSupabase('${d.number}')" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
+                if (cloudDocumentsHistory.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No hay documentos en la nube aún.</td></tr>`;
+                    return;
+                }
 
-            document.getElementById('dash-day').innerText = `$${dayTotal.toFixed(2)}`;
-            document.getElementById('dash-week').innerText = `$${weekTotal.toFixed(2)}`;
-            document.getElementById('dash-month').innerText = `$${monthTotal.toFixed(2)}`;
-            document.getElementById('dash-year').innerText = `$${yearTotal.toFixed(2)}`;
+                cloudDocumentsHistory.forEach(d => {
+                    const total = d.total || 0;
+                    const dDate = new Date(d.date || now);
+                    
+                    if (d.date === todayStr) dayTotal += total;
+                    if (now - dDate <= 7 * 24 * 60 * 60 * 1000) weekTotal += total;
+                    if (dDate.getMonth() === now.getMonth() && dDate.getFullYear() === now.getFullYear()) monthTotal += total;
+                    if (dDate.getFullYear() === now.getFullYear()) yearTotal += total;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 border-b border-slate-100">
+                            <td class="py-2.5 px-3 font-bold text-forest-900">${d.number}</td>
+                            <td class="py-2.5 px-3 text-slate-600">${d.date}</td>
+                            <td class="py-2.5 px-3 text-slate-700">${d.clientName || 'N/A'}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-gold-700">$${total.toFixed(2)}</td>
+                            <td class="py-2.5 px-3 text-center space-x-1.5">
+                                <button onclick="cargarDocumentoParaEditar('${d.number}')" class="px-2 py-1 text-[10px] font-bold bg-forest-900 text-gold-400 rounded-lg hover:bg-forest-800" title="Cargar y Editar"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                                <a href="factura.html?doc=${d.number}" target="_blank" class="text-forest-900 hover:text-gold-600 p-1" title="Ver Vista Previa"><i class="fa-solid fa-eye"></i></a>
+                                <button onclick="eliminarFacturaSupabase('${d.number}')" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('dash-day').innerText = `$${dayTotal.toFixed(2)}`;
+                document.getElementById('dash-week').innerText = `$${weekTotal.toFixed(2)}`;
+                document.getElementById('dash-month').innerText = `$${monthTotal.toFixed(2)}`;
+                document.getElementById('dash-year').innerText = `$${yearTotal.toFixed(2)}`;
+
+            } catch (err) {
+                console.error("Error al cargar historial de Supabase:", err);
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-red-400">Error al conectar con la nube.</td></tr>`;
+            }
         }
 
         function loadSettingsLists() {
