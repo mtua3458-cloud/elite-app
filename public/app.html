@@ -24,13 +24,14 @@
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen pb-24">
 
     <div id="app-shell">
-        <!-- CABECERA PRINCIPAL CON EL LOGO OFICIAL -->
+        <!-- CABECERA PRINCIPAL CON EL LOGO OFICIAL DINÁMICO -->
         <header class="bg-forest-900 text-white border-b-2 border-gold-500 sticky top-0 z-30 shadow-md w-full">
             <div class="w-full px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
                     <!-- LOGO OFICIAL REAL DE ELITE POINT -->
-                    <div class="shrink-0 bg-forest-950/80 border border-gold-500/40 p-1.5 rounded-xl shadow-inner">
-                        <img src="1000409393.jpg" alt="Elite Point Property Services" class="h-10 sm:h-12 w-auto object-contain">
+                    <div class="shrink-0 bg-forest-950/80 border border-gold-500/40 p-1.5 rounded-xl shadow-inner flex items-center justify-center">
+                        <img id="app-logo-img" src="1000409393.jpg" onerror="this.style.display='none'; document.getElementById('app-logo-fallback').classList.remove('hidden');" alt="Elite Point Property Services" class="h-10 sm:h-12 w-auto object-contain">
+                        <span id="app-logo-fallback" class="hidden font-display font-bold text-gold-400 text-sm px-2 tracking-wider">ELITE POINT</span>
                     </div>
                 </div>
 
@@ -181,6 +182,18 @@
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl px-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
+            <!-- 0. CARGAR LOGOTIPO MANUALMENTE -->
+            <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-image text-gold-600"></i> Logotipo Corporativo</h4>
+                <p class="text-[11px] text-slate-500">Carga tu logo manual para que aparezca arriba, en el inicio de sesión y en todas tus facturas y estimados.</p>
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <input type="file" id="setting-logo-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-forest-900 file:text-gold-400 hover:file:bg-forest-800 cursor-pointer">
+                    <button type="button" onclick="saveCustomLogo()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold rounded-xl text-xs transition-all shadow shrink-0">
+                        <i class="fa-solid fa-upload"></i> Guardar Logo
+                    </button>
+                </div>
+            </div>
+
             <!-- 1. RESUMEN FINANCIERO Y FILTROS -->
             <div class="space-y-3">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -239,9 +252,9 @@
                 <div id="users-setting-list" class="space-y-1 pt-1"></div>
             </div>
 
-            <!-- 4. LISTADO DE DOCUMENTOS HISTÓRICOS -->
+            <!-- 4. LISTADO DE DOCUMENTOS HISTÓRICOS CON BOTÓN DE BORRAR -->
             <div class="space-y-3 pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Historial de Documentos</h4>
+                <h4 class="text-xs font-extrabold text-forest-900 uppercase tracking-wider"><i class="fa-solid fa-folder-open text-gold-600"></i> Historial de Documentos (Presupuestos y Facturas)</h4>
                 <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 sticky top-0">
@@ -250,7 +263,7 @@
                                 <th class="py-2 px-3">Fecha</th>
                                 <th class="py-2 px-3">Cliente</th>
                                 <th class="py-2 px-3 text-right">Total</th>
-                                <th class="py-2 px-3 text-center">Acción</th>
+                                <th class="py-2 px-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="dash-docs-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
@@ -262,6 +275,46 @@
 
     <script>
         const API_URL = "https://elite-api.mtua3458.workers.dev";
+
+        // --- APLICAR Y GUARDAR LOGOTIPO MANUAL ---
+        function applySavedLogo() {
+            const savedLogo = localStorage.getItem('elite_custom_logo');
+            if (savedLogo) {
+                const img = document.getElementById('app-logo-img');
+                img.src = savedLogo;
+                img.style.display = 'block';
+                document.getElementById('app-logo-fallback').classList.add('hidden');
+            }
+        }
+        applySavedLogo();
+
+        function saveCustomLogo() {
+            const fileInput = document.getElementById('setting-logo-input');
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert("Selecciona una imagen primero.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxHeight = 160;
+                    const scale = maxHeight / img.height;
+                    canvas.width = img.width * scale;
+                    canvas.height = maxHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/png');
+                    localStorage.setItem('elite_custom_logo', compressedBase64);
+                    applySavedLogo();
+                    alert("¡Logotipo actualizado en todo el sistema!");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
 
         const serviceOptions = [
             "Christmas Lights Installation & Removal",
@@ -439,6 +492,7 @@
                 clientPhone: document.getElementById('client-phone').value.trim(),
                 clientAddress: document.getElementById('client-address').value,
                 paymentLink: document.getElementById('payment-link').value.trim(),
+                customLogo: localStorage.getItem('elite_custom_logo') || null,
                 housePhoto: housePhotoDataUrl,
                 houseCaption: document.getElementById('house-photo-caption').value,
                 items: items,
@@ -449,13 +503,15 @@
 
         async function saveToCloudflareKV(docData) {
             try {
-                await fetch(API_URL, {
+                const response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(docData)
                 });
+                return await response.json();
             } catch (err) {
                 console.error("Error sincronizando con la nube:", err);
+                return null;
             }
         }
 
@@ -574,8 +630,9 @@
                         <td class="py-2.5 px-3 text-slate-600">${doc.date}</td>
                         <td class="py-2.5 px-3 font-medium text-slate-800">${doc.clientName}</td>
                         <td class="py-2.5 px-3 text-right font-extrabold text-forest-900">$${total.toFixed(2)}</td>
-                        <td class="py-2.5 px-3 text-center">
+                        <td class="py-2.5 px-3 text-center space-x-1">
                             <a href="factura.html?doc=${doc.number}" target="_blank" class="px-2 py-1 bg-forest-900 text-gold-400 rounded text-[10px] font-bold">Ver</a>
+                            <button onclick="deleteDocument('${doc.number}')" class="px-2 py-1 bg-red-600 text-white rounded text-[10px] font-bold hover:bg-red-700" title="Borrar Documento"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -585,6 +642,15 @@
             document.getElementById('dash-week').innerText = `$${totalWeek.toFixed(2)}`;
             document.getElementById('dash-month').innerText = `$${totalMonth.toFixed(2)}`;
             document.getElementById('dash-year').innerText = `$${totalYear.toFixed(2)}`;
+        }
+
+        // FUNCIÓN PARA BORRAR FACTURA O ESTIMADO
+        function deleteDocument(docNum) {
+            if (confirm(`¿Estás segura de que deseas eliminar el documento #${docNum}?`)) {
+                localStorage.removeItem(`elite_doc_${docNum}`);
+                loadDashboardData();
+                alert(`Documento #${docNum} eliminado con éxito.`);
+            }
         }
 
         function isSameWeek(d1, d2) {
